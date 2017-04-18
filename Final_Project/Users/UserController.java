@@ -55,7 +55,14 @@ public class UserController {
         @Override
         public void registerUser() {
 
-            usersList.add(this);
+            if (usersList.size() == 0 || usersList.indexOf(this) == -1) {
+                usersList.add(this);
+
+            } else System.out.println("такой пользователь уже зарегистрирован");
+
+
+
+
         }
 
         @Override

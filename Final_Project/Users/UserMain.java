@@ -10,9 +10,9 @@ public class UserMain {
         Users user2 = UserController.createUser("First2", "Last2");
         Users user3 = UserController.createUser("First3", "Last3");
 
-        System.out.println(user1);
-        System.out.println(user2);
-        System.out.println(user3);
+//        System.out.println(user1);
+//        System.out.println(user2);
+//        System.out.println(user3);
 
         UserController userController = new UserController();
 
@@ -23,7 +23,7 @@ public class UserMain {
         user2.registerUser();
         user3.registerUser();
 
-        userController.showId();
+//        userController.showId();
         userController.showUsers();
 
         System.out.println("====================");
@@ -32,6 +32,9 @@ public class UserMain {
 
         System.out.println("====================");
         user2.deleteUser();
+        Users user4 = UserController.createUser("First4", "Last4");
+//        user3.registerUser();
+        user4.registerUser();
         userController.showUsers();
     }
 
