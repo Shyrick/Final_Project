@@ -1,13 +1,21 @@
 package Final_Project.Users;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class UserController {
 
 
     private static List<Integer> idList = new ArrayList<>();
-    private static List<Users> usersList = new ArrayList<>();
+    private static List<User> usersList = new ArrayList<>();
+    private static DAO<User> userDAO = new DAO<>();
+
+    static {
+        //load users from file
+        usersList = userDAO.toList();
+    }
 
     public static int  lastId = 0;
 
@@ -17,7 +25,17 @@ public class UserController {
             lastId = id;
 
        return new User(id, firstName, lastName);
+    }
 
+    public static User createUserByLine(String line ){
+        // Syntaxis of line: Type id Name Surname
+        Scanner sc = new Scanner(new StringReader(line));
+        String type = sc.next();
+        int id = sc.nextInt();
+        String name = sc.next();
+        String surname = sc.next();
+
+        return new User(id, name, surname);
     }
 
 //    public void registerUser (Users user){
