@@ -1,12 +1,13 @@
 package Final_Project.Users;
 
+
 import java.util.Scanner;
 
 public class HotelManagementSystem {
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        UserController userController = new UserController();
+        UserController usrCtrl = new UserController();
         HotelManagementSystem hMS = new HotelManagementSystem();
 
         Scanner scanner = new Scanner(System.in);
@@ -15,7 +16,8 @@ public class HotelManagementSystem {
         System.out.println("Available commands: " +
                 "\n1. find hotels " +
                 "\n2. register user" +
-                "\n3. edit hotels");
+                "\n3. edit hotels" +
+                "\n4. show users");
         do{
             str = scanner.nextLine();
             switch (str) {
@@ -31,6 +33,12 @@ public class HotelManagementSystem {
                 case "edit hotels":
                 case "3":
                     System.out.println("edit hotels");
+                    break;
+                case "show users":
+                case "4":
+                    System.out.println("show users");
+                    usrCtrl.showUsers();
+                    break;
                 default:
             }
         }while (!str.equals("quit"));
