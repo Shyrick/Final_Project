@@ -1,7 +1,5 @@
-user 1 Ivan Ivanov
-user 2 Sergey Petrov
-user 3 John Smith
-user 4 Natalia Buriakova
-user 5 Olga Chuikova
-user 6 Mihail Gorbachov
-user 7 Ivan Petrov
+1 L1 N1 SN1 false
+2 L2 N2 SN2 false
+3 L3 N3 SN3 false
+4 L4 N4 SN4 false
+5 L5 N5 SN5 true
