@@ -1,6 +1,6 @@
 package mihail_metel;
 
-import Final_Project.Users.UserController;
+import Shyrick.UserController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,23 +8,29 @@ import java.util.Scanner;
 
 
 public class TextInterface {
-    private static final TextInterface interFace = new TextInterface();
+
+    private Scanner scanner = new Scanner(System.in);
+    private Shyrick.UserController userController;
+    private UserController.User editedUser;
+
+    private static TextInterface interFace;
     private Map<String,Map> loginMenu = new HashMap<>();
     private Map<String,Map> adminMenu = new HashMap<>();
     private Map<String,Map> userMenu  = new HashMap<>();
 
     private Shyrick.UserController.User you = null;
 
+    public static void create(UserController userController) {
+        interFace = new TextInterface(userController);
+    }
 
-    private TextInterface() {
+    private TextInterface(UserController userController) {
+        this.userController = userController;
 
         try{
             // structure of login menu:     login-register-exit
-            loginMenu.put("login", new HashMap<String, Map>());
+            loginMenu.put("login", null);
             loginMenu.put("register", null);
-
-            loginMenu.get("login").put("admin", null);
-            loginMenu.get("login").put("client", null);
 
             //structure of admin menu:  hotel -> add, find by name, find by city, edit, remove
             //                          user -> add user, add admin, find, edit, remove
@@ -39,12 +45,20 @@ public class TextInterface {
             adminMenu.get("hotel").put("edit", null);
             adminMenu.get("hotel").put("remove", null);
 
+            adminMenu.get("user").put("list users", null);
             adminMenu.get("user").put("add user", null);
-            adminMenu.get("user").put("add admin", null);
-            adminMenu.get("user").put("find by name", null);
-            adminMenu.get("user").put("find by ID", null);
-            adminMenu.get("user").put("edit", null);
-            adminMenu.get("user").put("remove", null);
+
+            Map<String, Map> editUserMenu = new HashMap<>();
+            editUserMenu.put("Edit user: find by name", null);
+            editUserMenu.put("Edit user: find by ID", null);
+
+            Map<String, Map> removeUserMenu = new HashMap<>();
+            removeUserMenu.put("Remove: find by name", null);
+            removeUserMenu.put("Remove: find by ID", null);
+
+            adminMenu.get("user").put("edit", editUserMenu);
+            adminMenu.get("user").put("remove", removeUserMenu);
+
 
             adminMenu.get("booking").put("add", null);
             adminMenu.get("booking").put("find by user", null);
@@ -95,25 +109,22 @@ public class TextInterface {
      * Рекурсивный метод текстового интерфейса, который принимает Мап со структурой команда-Мап, в котором
      *  хранится текст команды или подменю и ссылкой на следующие мапы(в случае когда есть подуровни), либо Null.
      *  Если ссылка на Мап равна нул, то запускается метод соответствующий имени команды
-     * @param map - Мап со структурой команда-Мап
+     * @param map Мап со структурой команда-Мап
      */
     public void runTUI(Map<String,Map> map) {
-        String str = "";
-        Scanner scanner = new Scanner(System.in);
-        UserController.User you = null;
+        String str;
 
         do {
-            System.out.println("Available commands: ");
             int i = 0;
-            Map<String,String> temp = new HashMap<>();
+            Map<String,String> temp = new HashMap<>();      // temp - map, linking text of commands and its number
 
             for (Map.Entry<String, Map> e:  map.entrySet()){
-                temp.put(Integer.toString(++i), e.getKey());    // temp - map, linking text of commands and their number
+                temp.put(Integer.toString(++i), e.getKey());
                 System.out.println(i + " " + e.getKey());
             }
             System.out.println((i + 1) + " exit");
 
-            str = scanner.nextLine();
+            str = scanner.next();
             if (str.equals("exit") || str.equals(Integer.toString(i + 1))){return;}
 
             if (map.keySet().contains(str) ) {      // if user entered text
@@ -133,8 +144,6 @@ public class TextInterface {
                 }
             }
         } while (!str.equals("exit"));
-
-        scanner.close();
     }
 
     /**
@@ -144,29 +153,166 @@ public class TextInterface {
      */
     private void switchCommands(String command) {
         switch (command){
-            case "admin": admin();
-                break;
-            case "client": client();
+            // логин
+            case "login": login();
                 break;
             case "register": register();
                 break;
-            case "exit":
 
+//            "list users"
+//            "add user"
+//            "add admin"
+//            "edit"
+//            "remove"
+
+            case "list users":
+                userController.showUsers();
                 break;
+            case "add user":
+                addUser();
+                break;
+            case "add admin":
+                addAdmin();
+                break;
+            case "Edit user: find by name":
+                editUserByLogin();
+                break;
+            case "Edit user: find by ID":
+                editUserById();
+                break;
+            case "Remove: find by name":
+                removeUserByLogin();
+                break;
+            case "Remove: find by ID":
+                removeUserById();
+                break;
+
         }
     }
 
-    private void admin() {
-        System.out.println("Admin menu: ");
-        runTUI(interFace.getAdminMenu());
+    private void removeUserById() {
+        findUserById();
+        if (editedUser!= null) {
+            userController.setTempUser(editedUser);
+            userController.deleteUser();
+        }
+        else {
+            System.out.println("Ползователь не найден");
+        }
     }
 
-    private void client() {
-        System.out.println("User menu: ");
-        runTUI(interFace.getUserMenu());
+    private void removeUserByLogin() {
+        findUserByLogin();
+        if (editedUser!= null) {
+            userController.setTempUser(editedUser);
+            userController.deleteUser();
+        }
+        else {
+            System.out.println("Ползователь не найден");
+        }
+    }
+
+    private void editUserById() {
+        findUserById();
+        if (editedUser!= null) {
+            userController.setTempUser(editedUser);
+            userController.editeUser();
+        }
+        else {
+            System.out.println("Ползователь не найден");
+        }
+    }
+
+    private void editUserByLogin() {
+        findUserByLogin();
+        if (editedUser!= null) {
+            userController.setTempUser(editedUser);
+            userController.editeUser();
+        }
+        else {
+            System.out.println("Ползователь не найден");
+        }
+    }
+
+    private void login() {
+        userController.login();
+        if (userController.getTempUser()!= null) {
+            if (userController.getTempUser().isAdmin()) {
+                runTUI(interFace.getAdminMenu());
+            }
+            else {
+                runTUI(interFace.getUserMenu());
+            }
+        }
+    }
+
+    private void removeUser() {
+        userController.deleteUser();
+    }
+
+    private void editUser() {
+        userController.editeUser();
+    }
+
+    private void findUserById() {
+        System.out.println("Введите ID пользователя");
+        editedUser = userController.findById(getId());
+        System.out.println(editedUser);
+    }
+
+    private void findUserByLogin() {
+        System.out.println("Введите логин пользователя");
+        String str = getName();
+        editedUser = userController.findByLogin(str);
+        System.out.println(editedUser);
+    }
+
+    private void addAdmin() {
+        System.out.println("Input user data");
+        userController.registerUser();
+    }
+
+    private void addUser() {
+        System.out.println("Input user data");
+        userController.registerUser();
     }
 
     private void register() {
-        System.out.println("register method");
+        userController.registerUser();
+    }
+
+
+    // Methods for data input
+    private int getId() {
+        return scanner.nextInt();
+    }
+
+    private String getName() {
+        return scanner.next();
+    }
+
+    private String getCity() {
+        System.out.println("City:");
+        return scanner.next();
+    }
+
+    private int getDuration() {
+        System.out.println("Duration (Days):");
+        return scanner.nextInt();
+    }
+
+    private int getDay() {
+        System.out.println("Since (D): ");
+        return scanner.nextInt();
+    }
+
+    private int getMonth() {
+        System.out.println("Since (M):");
+        return scanner.nextInt();
+    }
+
+    private int getYear() {
+        System.out.println("Since (Y):");
+        return scanner.nextInt();
     }
 }

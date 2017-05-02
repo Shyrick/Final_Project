@@ -1,9 +1,11 @@
 package crazyjedi;
 
+import Shyrick.UserController;
+
 import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
-import Final_Project.Users.UserController.User;
+
 
 /**
  * Created by Vlad on 30.04.2017.
@@ -13,12 +15,12 @@ public class Booking {
     private static AtomicLong counter = new AtomicLong(0);
     private long id;
     private Room room;
-    private User user;
+    private UserController.User user;
     private Date dateBegin;
     private Date dateEnd;
     private Hotel hotel;
 
-    public Booking(User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
+    public Booking(UserController.User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
 
         if(user==null||dateBegin==null||dateEnd==null||hotel==null||room==null){
             throw new IllegalArgumentException("No null field allowed");
@@ -39,7 +41,7 @@ public class Booking {
         return room;
     }
 
-    public User getUser() {
+    public UserController.User getUser() {
         return user;
     }
 
