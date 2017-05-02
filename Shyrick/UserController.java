@@ -236,10 +236,13 @@ public class UserController {
         usersMenu();
     }
 
+    public User findById(int id) {
+        return usersList.stream().filter(u->u.getId() == id).findFirst().orElse(null);
+    }
 
-
-
-
+    public User findByLogin(String str) {
+        return usersList.stream().filter(u->u.getLogin().equals(str)).findFirst().orElse(null);
+    }
 
     public static class User{
 
