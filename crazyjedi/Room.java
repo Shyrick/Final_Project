@@ -9,12 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Room {
 
     private int id;
-    private static AtomicInteger counter=new AtomicInteger(0);
     private byte person;
     private BigDecimal price;
 
-    public Room(byte person, BigDecimal price) {
-        id=counter.getAndIncrement();
+    public Room(int id,byte person, BigDecimal price) {
+        this.id=id;
         this.person = person;
         this.price = price;
     }
@@ -37,5 +36,14 @@ public class Room {
 
     public int getId(){
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", person=" + person +
+                ", price=" + price +
+                '}';
     }
 }

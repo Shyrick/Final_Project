@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by Vlad on 30.04.2017.
@@ -11,19 +12,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Hotel {
 
     private int id;
-    private static AtomicInteger counter=new AtomicInteger(0);
     private int cityId;
     private String name;
     private List<Room> rooms = null;
 
-    public Hotel(int cityId, String name) {
-        id=counter.getAndIncrement();
+    public Hotel(int id, int cityId, String name) {
+        this.id=id;
         this.cityId = cityId;
         this.name = name;
         rooms=new ArrayList<>();
     }
 
-
+    public List<String> getRoomIds(){
+        List<String> res = new ArrayList<>();
+        for (Room room : this.getRooms()) {
+            res.add(Integer.toString(room.getId()));
+        }
+        return res;
+    }
 
     public int getId(){
         return id;
@@ -68,9 +74,14 @@ public class Hotel {
         return rooms;
     }
 
-    //todo реализовать чтение-запись
-    private void dumpRooms(){}
-    private void readRooms(){}
-    private void dumpHotel(){}
-    private void readHotel(){}
+
+    @Override
+    public String toString() {
+        return "Hotel{" +
+                "id=" + id +
+                ", cityId=" + cityId +
+                ", name='" + name + '\'' +
+                ", rooms=" + rooms +
+                '}';
+    }
 }
