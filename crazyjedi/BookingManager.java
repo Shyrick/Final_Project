@@ -81,6 +81,9 @@ public class BookingManager {
     //REMOVING BOOKING
 
     public void removeBooking(Booking booking){
+        /**
+         *
+         */
         bookingList.remove(booking);
     }
 
