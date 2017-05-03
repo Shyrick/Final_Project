@@ -79,11 +79,8 @@ public class BookingManager {
     }
 
     //REMOVING BOOKING
-
+    //todo реализовать со списком
     public void removeBooking(Booking booking){
-        /**
-         *
-         */
         bookingList.remove(booking);
     }
 

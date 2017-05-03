@@ -1,6 +1,8 @@
 package crazyjedi;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -11,13 +13,14 @@ public class HotelManager {
 
     public List<Hotel> hotels;
     public Set<City> cities;
-
+    private AtomicInteger hotelMaxId = new AtomicInteger(0);
+    private AtomicInteger roomMaxId = new AtomicInteger(0);
     public HotelManager() {
         this.hotels = new ArrayList<>();
         this.cities = new HashSet<>();
     }
 
-    public void addHotel(Hotel hotel){
+    private void addHotel(Hotel hotel){
         hotels.add(hotel);
     }
 
@@ -75,6 +78,15 @@ public class HotelManager {
 
     public List<Hotel> getHotelsByCity(int cityId) {
         return hotels.stream().filter(hotel -> hotel.getCityId()==cityId).collect(Collectors.toList());
+    }
+
+    //Creating hotels
+    public void createHotel(int hotelId, int cityId, String name){
+        this.addHotel(new Hotel(this.hotelMaxId.incrementAndGet(),cityId,name));
+    }
+    //Creating rooms
+    public void createRoom(Hotel hotel,int roomId, byte person, BigDecimal price){
+        hotel.addRoom(new Room(this.roomMaxId.incrementAndGet(),person,price));
     }
 
 
