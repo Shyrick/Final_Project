@@ -1,17 +1,42 @@
 package Shyrick;
 
+import Final_Project.Users.DAO;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class UserController {
+public class UserController implements DAO {
 
     private   int  id = 0;
     private List<User> usersList = new ArrayList<>();
     private User tempUser;
 
     File file = new File("UsersList.txt");
+
+    @Override
+    public List load() {
+        readDB();
+        return usersList;
+    }
+
+    @Override
+    public void save() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            for (int i = 0; i < usersList.size(); i++) {
+                writer.write(usersList.get(i).getId() + " "
+                        + usersList.get(i).getLogin() + " "
+                        + usersList.get(i).getFirstName() + " "
+                        +  usersList.get(i).getLastName() + " "
+                        + usersList.get(i).isAdmin);
+                if (i < usersList.size() - 1)  writer.write( "\n");
+                writer.flush();
+            }
+            } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
 
     public void readDB (){
 
@@ -28,19 +53,10 @@ public class UserController {
                 this.id = id;
             }
         } catch (FileNotFoundException e) {
+            System.out.println("Ошибка во время чтения файла");
             e.printStackTrace();
         }
 
-    }
-
-    public void writeInDB (){
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
-            writer.write("Hello3");
-            // После записи необходимо сбросить на диск.
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void mainManu (){
@@ -102,8 +118,8 @@ public class UserController {
     tempUser = usersList.get(indexOfUser);
     System.out.println("Добро пожаловать " + tempUser.firstName + " " + tempUser.lastName );
 
-    if (tempUser.isAdmin) adminMenu();
-    else  usersMenu();
+//    if (tempUser.isAdmin) adminMenu();
+//    else  usersMenu();
 }
 
     private void adminMenu() {
@@ -167,7 +183,8 @@ public class UserController {
                 usersList.get(usersList.size()-1).lastName + " Логин - " + usersList.get(usersList.size()-1).login +"  успешно зарегистрирован");
 
 // Добавить запись пользователя в файл
-        usersMenu();
+        save();
+//        usersMenu();
 
     }
 
@@ -190,13 +207,12 @@ public class UserController {
                     usersList.get(i).setLastName(newLastName);
 
                     System.out.println("Данные пользователя успешно изменены");
+                    save();
                     break;
                 }
             }
 
         } else System.out.println("Еще нет ни одного пользователя");
-
-        usersMenu();
     }
 
     public void deleteUser(){
@@ -227,19 +243,31 @@ public class UserController {
             if (confirm == 1){
 
                 usersList.remove(usersList.get(indexOfUser));
+                save();
                 System.out.println("Даннне пользователя успешно удалены");
 
             }else System.out.println("Ну и ладно");
 
         } else System.out.println("Удаление невозможно. Еще нет ни одного пользователя");
 
-        usersMenu();
+ //       usersMenu();
     }
 
+    public User findById(int id) {
+        return usersList.stream().filter(u->u.getId() == id).findFirst().orElse(null);
+    }
 
+    public User findByLogin(String str) {
+        return usersList.stream().filter(u->u.getLogin().equals(str)).findFirst().orElse(null);
+    }
 
+    public User getTempUser() {
+        return tempUser;
+    }
 
-
+    public void setTempUser(User tempUser) {
+        this.tempUser = tempUser;
+    }
 
     public static class User{
 
