@@ -1,5 +1,6 @@
 package crazyjedi;
 
+import Shyrick.User;
 import Shyrick.UserController;
 
 import java.awt.print.Book;
@@ -45,7 +46,7 @@ public class BookingManager {
         return null;
     }
 
-    public List<Booking> getByUser(UserController.User user){
+    public List<Booking> getByUser(User user){
         return bookingList.stream().filter(booking -> booking.getUser().equals(user)).collect(Collectors.toList());
     }
 
@@ -63,18 +64,18 @@ public class BookingManager {
 
     //ADDING NEW BOOKING
 
-    public void addBooking(Date dateBegin, Date dateEnd, UserController.User user, int hotelId, int roomId){
+    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, int roomId){
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         Room tempRoom = hotelManager.findRoomById(roomId);
         Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,tempRoom);
     }
 
-    public void addBooking(Date dateBegin, Date dateEnd, UserController.User user, int hotelId, Room room){
+    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, Room room){
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,room);
     }
 
-    public void addBooking(Date dateBegin, Date dateEnd, UserController.User user, Hotel hotel, Room room){
+    public void addBooking(Date dateBegin, Date dateEnd, User user, Hotel hotel, Room room){
         Booking tempBooking = new Booking(user,dateBegin,dateEnd,hotel,room);
     }
 

@@ -11,6 +11,10 @@ public class UserMain {
 
         menu.helloManu();
 
+        UserController us = new UserController();
+
+        us.daoUser.showUsers();
+
 
 
     }

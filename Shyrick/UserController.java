@@ -223,6 +223,26 @@ public class UserController {
 //      Вызом меню пользователя
 //        menu.userMainMenu();
 
+
+
+    }
+
+    public User findById(int id){
+        System.out.println("Нужно написть метод findById");
+        return null;
+    }
+
+    public User findByLogin(String login){
+        System.out.println("Нужно написть метод findByLogin");
+        return null;
+    }
+
+    public void setTempUser(User user){
+        tempUser = user;
+    }
+
+    public User getTempUser(){
+        return tempUser;
     }
 
 
