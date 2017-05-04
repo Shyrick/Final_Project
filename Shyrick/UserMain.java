@@ -7,8 +7,6 @@ public class UserMain {
         UserController userController = new UserController();
 
         userController.readDB();
-        userController.mainManu();
-
     }
 
 }

@@ -59,101 +59,26 @@ public class UserController implements DAO {
 
     }
 
-    public void mainManu (){
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("1 - Войти");
-        System.out.println("2 - Зарегистрироваться");
-
-        byte choise = scanner.nextByte();
-
-        if (choise == 1){
-            login();
-        }
-        if (choise == 2) {
-            registerUser();
-        }
-
-    }
-
-    public void usersMenu (){
-
-    System.out.println("1 -  Изменить личные данные");
-    System.out.println("2 -  Удалить пользователя");
-    System.out.println("3 -  Показать список пользователей");
-    Scanner scanner = new Scanner(System.in);
-    byte choise = scanner.nextByte();
-    if (choise == 1) editeUser();
-    if (choise == 2) deleteUser();
-    if (choise == 3) showUsers();
-}
-
-    public void login (){
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("Введите логин");
-    String login = scanner.nextLine();
-    int flag1 = 0;
-    int indexOfUser = 0;
-    if (usersList.size() != 0 ) {
-
-
-        do {
-            flag1 = 0;
-            for (int i = 0; i < usersList.size(); i++) {
-                if (usersList.get(i).login.equals(login)) {
-                    flag1 = 1;
-                    indexOfUser = i;
-                    break;
-                }
-            }
-            if (flag1 == 0) {
-                System.out.println("Неверный логин. Повторите ввод логина");
-
-                login = scanner.nextLine();
-            }
-
-        } while (flag1 == 0);
-    }
-    tempUser = usersList.get(indexOfUser);
-    System.out.println("Добро пожаловать " + tempUser.firstName + " " + tempUser.lastName );
-
-//    if (tempUser.isAdmin) adminMenu();
-//    else  usersMenu();
-}
-
-    private void adminMenu() {
-        System.out.println("Меню администратора");
-    }
-
     public void showUsers() {
-
-        for (int i = 0; i < usersList.size() ; i++) {
-
-            System.out.println(usersList.get(i));
-        }
+        usersList.forEach(System.out::println);
     }
 
     private  User createUser(String login, String firstName, String lastName){
-
          id ++;
         return new User(id, login, firstName, lastName, false);
     }
 
     private  User createUserFromFile(int id, String login, String firstName, String lastName, boolean isAdmin){
-
-
         return new User(id, login, firstName, lastName, isAdmin);
     }
 
     public void registerUser() {
-
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите логин");
         String login = scanner.nextLine();
-        int flag1 = 0;
-        if (usersList.size() != 0 ){
+        int flag1;
 
+        if (usersList.size() != 0 ){
             do {
                 flag1 = 0;
                 for (int i = 0; i < usersList.size() ; i++) {
@@ -269,6 +194,10 @@ public class UserController implements DAO {
         this.tempUser = tempUser;
     }
 
+    public boolean hasLogin(String login) {
+        return usersList.stream().filter(user -> user.getLogin().equals(login)).findFirst().orElse(null)!= null;
+    }
+
     public static class User{
 
         private   int id;
@@ -288,13 +217,12 @@ public class UserController implements DAO {
 
         @Override
         public String toString() {
-            return "User{" +
-                    "id=" + id +
-                    ", login='" + login + '\'' +
-                    ", firstName='" + firstName + '\'' +
-                    ", lastName='" + lastName + '\'' +
-                    ", isAdmin=" + isAdmin +
-                    '}';
+            String str = isAdmin?"Админ \t":"Клиент \t";
+            return str +
+                    "id - " + id +
+                    ",\tлогин - " + login +
+                    ",\tимя - " + firstName +
+                    ",\tфамилия - " + lastName;
         }
 
         public int getId() {

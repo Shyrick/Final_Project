@@ -15,6 +15,11 @@ public class TextInterface {
 
     private static TextInterface interFace;
     private Map<String,Map> loginMenu = new HashMap<>();
+
+    public Scanner getScanner() {
+        return scanner;
+    }
+
     private Map<String,Map> adminMenu = new HashMap<>();
     private Map<String,Map> userMenu  = new HashMap<>();
 
@@ -29,60 +34,64 @@ public class TextInterface {
 
         try{
             // structure of login menu:     login-register-exit
-            loginMenu.put("login", null);
-            loginMenu.put("register", null);
+            loginMenu.put("Вход", null);
+            loginMenu.put("Регистрация", null);
 
             //structure of admin menu:  hotel -> add, find by name, find by city, edit, remove
             //                          user -> add user, add admin, find, edit, remove
             //                          booking -> add, find, edit, remove
-            adminMenu.put("hotel", new HashMap<String, Map>());
-            adminMenu.put("user", new HashMap<String, Map>());
-            adminMenu.put("booking", new HashMap<String, Map>());
+            adminMenu.put("Отели", new HashMap<String, Map>());
+            adminMenu.put("Пользователи", new HashMap<String, Map>());
+            adminMenu.put("Бронирования", new HashMap<String, Map>());
 
-            adminMenu.get("hotel").put("add", null);
-            adminMenu.get("hotel").put("find by name", null);
-            adminMenu.get("hotel").put("find by city", null);
-            adminMenu.get("hotel").put("edit", null);
-            adminMenu.get("hotel").put("remove", null);
+            adminMenu.get("Отели").put("Добавить", null);
+            adminMenu.get("Отели").put("Поиск по имени", null);
+            adminMenu.get("Отели").put("Поиск по городу", null);
+            adminMenu.get("Отели").put("Редактировать отель", null);
+            adminMenu.get("Отели").put("Удалить отель", null);
 
-            adminMenu.get("user").put("list users", null);
-            adminMenu.get("user").put("add user", null);
+            adminMenu.get("Пользователи").put("Вывести список пользователей на экран", null);
+
+            Map<String, Map> addAdminOrUerUserMenu = new HashMap<>();
+            addAdminOrUerUserMenu.put("Добавить пользователя", null);
+            addAdminOrUerUserMenu.put("Добавить администратора", null);
+            adminMenu.get("Пользователи").put("Добавить пользователя или администратора", addAdminOrUerUserMenu);
 
             Map<String, Map> editUserMenu = new HashMap<>();
-            editUserMenu.put("Edit user: find by name", null);
-            editUserMenu.put("Edit user: find by ID", null);
+            editUserMenu.put("Редактировать данные: найти по Id", null);
+            editUserMenu.put("Редактировать данные: найти по логину", null);
 
             Map<String, Map> removeUserMenu = new HashMap<>();
-            removeUserMenu.put("Remove: find by name", null);
-            removeUserMenu.put("Remove: find by ID", null);
+            removeUserMenu.put("Удалить пользователя: найти по логину", null);
+            removeUserMenu.put("Удалить пользователя: найти по Id", null);
 
-            adminMenu.get("user").put("edit", editUserMenu);
-            adminMenu.get("user").put("remove", removeUserMenu);
+            adminMenu.get("Пользователи").put("Изменить данные", editUserMenu);
+            adminMenu.get("Пользователи").put("Удалить", removeUserMenu);
 
 
-            adminMenu.get("booking").put("add", null);
-            adminMenu.get("booking").put("find by user", null);
-            adminMenu.get("booking").put("find by ID", null);
-            adminMenu.get("booking").put("edit", null);
-            adminMenu.get("booking").put("remove", null);
+            adminMenu.get("Бронирования").put("Сделать бронирование", null);
+            adminMenu.get("Бронирования").put("Найти бронирования пользователя", null);
+            adminMenu.get("Бронирования").put("Поис бронирования по ID", null);
+            adminMenu.get("Бронирования").put("Изменить данные бронирования", null);
+            adminMenu.get("Бронирования").put("Отменить бронирование", null);
 
             //structure of user menu:  hotel -> find by name, find by city
             //                         personal data -> edit, remove
             //                         my bookings -> add, see, edit, cancel
-            userMenu.put("hotel", new HashMap<String, Map>());
-            userMenu.put("personal data", new HashMap<String, Map>());
-            userMenu.put("my bookings", new HashMap<String, Map>());
+            userMenu.put("Поиск отелей", new HashMap<String, Map>());
+            userMenu.put("Редактировать персональные данные", new HashMap<String, Map>());
+            userMenu.put("Действия со своими бронированиями", new HashMap<String, Map>());
 
-            userMenu.get("hotel").put("find by name", null);
-            userMenu.get("hotel").put("find by city", null);
+            userMenu.get("Поиск отелей").put("find by name", null);
+            userMenu.get("Поиск отелей").put("find by city", null);
 
-            userMenu.get("personal data").put("edit", null);
-            userMenu.get("personal data").put("remove", null);
+            userMenu.get("Редактировать персональные данные").put("edit", null);
+            userMenu.get("Редактировать персональные данные").put("remove", null);
 
-            userMenu.get("my bookings").put("add", null);
-            userMenu.get("my bookings").put("see", null);
-            userMenu.get("my bookings").put("edit", null);
-            userMenu.get("my bookings").put("cancel", null);
+            userMenu.get("Действия со своими бронированиями").put("add", null);
+            userMenu.get("Действия со своими бронированиями").put("see", null);
+            userMenu.get("Действия со своими бронированиями").put("edit", null);
+            userMenu.get("Действия со своими бронированиями").put("cancel", null);
         }
         catch (RuntimeException e) {
             System.out.println("Exception in menu initialization:" + e.toString());
@@ -120,15 +129,16 @@ public class TextInterface {
 
             for (Map.Entry<String, Map> e:  map.entrySet()){
                 temp.put(Integer.toString(++i), e.getKey());
-                System.out.println(i + " " + e.getKey());
+                System.out.println(i + ".  " + e.getKey());
             }
-            System.out.println((i + 1) + " exit");
+            System.out.println((i + 1) + ".  Выход");
 
             str = scanner.next();
-            if (str.equals("exit") || str.equals(Integer.toString(i + 1))){return;}
+            if (str.equals("Выход") || str.equals(Integer.toString(i + 1))){return;}
 
             if (map.keySet().contains(str) ) {      // if user entered text
                 if (map.get(str)!= null) {
+                    System.out.println(str);
                     runTUI(map.get(str));
                 }
                 else {
@@ -137,13 +147,14 @@ public class TextInterface {
             }
             if (temp.keySet().contains(str)) {      // if user entered command number
                 if (map.get(temp.get(str))!= null) {
+                    System.out.println(temp.get(str));
                     runTUI(map.get(temp.get(str)));
                 }
                 else {
                     switchCommands(temp.get(str));
                 }
             }
-        } while (!str.equals("exit"));
+        } while (!str.equals("Выход"));
     }
 
     /**
@@ -154,9 +165,9 @@ public class TextInterface {
     private void switchCommands(String command) {
         switch (command){
             // логин
-            case "login": login();
+            case "Вход": login();
                 break;
-            case "register": register();
+            case "Регистрация": register();
                 break;
 
 //            "list users"
@@ -165,25 +176,25 @@ public class TextInterface {
 //            "edit"
 //            "remove"
 
-            case "list users":
+            case "Вывести список пользователей на экран":
                 userController.showUsers();
                 break;
-            case "add user":
+            case "Добавить пользователя":
                 addUser();
                 break;
-            case "add admin":
+            case "Добавить администратора":
                 addAdmin();
                 break;
-            case "Edit user: find by name":
+            case "Редактировать данные: найти по логину":
                 editUserByLogin();
                 break;
-            case "Edit user: find by ID":
+            case "Редактировать данные: найти по Id":
                 editUserById();
                 break;
-            case "Remove: find by name":
+            case "Удалить пользователя: найти по логину":
                 removeUserByLogin();
                 break;
-            case "Remove: find by ID":
+            case "Удалить пользователя: найти по Id":
                 removeUserById();
                 break;
 
@@ -235,7 +246,17 @@ public class TextInterface {
     }
 
     private void login() {
-        userController.login();
+        System.out.println("Введите логин");
+        String login = scanner.next();
+
+        if (userController.hasLogin(login)) {
+            userController.setTempUser(userController.findByLogin(login));
+            System.out.println("Добро пожаловать " + userController.getTempUser());
+        }
+        else {
+            System.out.println("Несущствующий логин.");
+        }
+
         if (userController.getTempUser()!= null) {
             if (userController.getTempUser().isAdmin()) {
                 runTUI(interFace.getAdminMenu());
@@ -268,13 +289,13 @@ public class TextInterface {
     }
 
     private void addAdmin() {
-        System.out.println("Input user data");
         userController.registerUser();
+        userController.getTempUser().setAdmin(true);
     }
 
     private void addUser() {
-        System.out.println("Input user data");
         userController.registerUser();
+        userController.getTempUser().setAdmin(false);
     }
 
     private void register() {
