@@ -19,13 +19,12 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", getIsAdmin=" + isAdmin +
-                '}';
+        String str = isAdmin?"Админ \t":"Клиент \t";
+        return str +
+                "id - " + id +
+                ",\tлогин - " + login +
+                ",\tимя - " + firstName +
+                ",\tфамилия - " + lastName;
     }
 
     public String userToStringForWrite() {
