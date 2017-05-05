@@ -9,7 +9,6 @@ public class HotelManagementSystem {
 
     public static void main(String[] args) {
         UserController userController = new UserController();
-//        userController.readDB();
         // HotelManager
         // BookingManager
         TextInterface.create(userController); // менеджеры должны быть переданы как параметры, потом надо добавить и контроллеры отелей и букингов

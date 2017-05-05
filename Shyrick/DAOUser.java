@@ -11,6 +11,10 @@ public class DAOUser {
     private List<User> usersList = new ArrayList<>();
     private File file = new File("ShyrickUsersList.txt");
 
+    public DAOUser() {
+        readDB();
+    }
+
     public void showUsers() {
 
         for (int i = 0; i < usersList.size(); i++) {
@@ -84,6 +88,18 @@ public class DAOUser {
 
     public void removeUserFromList (User user){
         usersList.remove(user);
+    }
+
+    public User findById(int id){
+        return usersList.stream().filter(u->u.getId()==id).findFirst().orElse(null);
+    }
+
+    public User findByLogin(String login){
+        return usersList.stream().filter(u->u.getLogin().equals(login)).findFirst().orElse(null);
+    }
+
+    public boolean hasLogin(String login) {
+        return usersList.stream().filter(user -> user.getLogin().equals(login)).findFirst().orElse(null)!= null;
     }
 
 

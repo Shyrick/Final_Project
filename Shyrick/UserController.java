@@ -227,13 +227,11 @@ public class UserController {
     }
 
     public User findById(int id){
-        System.out.println("Нужно написть метод findById");
-        return null;
+        return daoUser.findById(id);
     }
 
     public User findByLogin(String login){
-        System.out.println("Нужно написть метод findByLogin");
-        return null;
+        return daoUser.findByLogin(login);
     }
 
     public void setTempUser(User user){
@@ -245,6 +243,8 @@ public class UserController {
     }
 
     public boolean hasLogin(String login) {
-        return true; // нужно написать //usersList.stream().filter(user -> user.getLogin().equals(login)).findFirst().orElse(null)!= null;
+        return daoUser.hasLogin(login);
     }
+
+    public void showUsers() {daoUser.showUsers();}
 }

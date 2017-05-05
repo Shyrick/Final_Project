@@ -12,7 +12,6 @@ public class TextInterface {
 
     private Scanner scanner = new Scanner(System.in);
     private Shyrick.UserController userController;
-    private Shyrick.DAOUser daoUser;
     private User editedUser;
 
     private static TextInterface interFace;
@@ -179,7 +178,7 @@ public class TextInterface {
 //            "remove"
 
             case "Вывести список пользователей на экран":
-                daoUser.showUsers();
+                userController.showUsers();
             case "list users":
 
                 break;
