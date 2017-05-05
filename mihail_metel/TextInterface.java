@@ -1,5 +1,6 @@
 package mihail_metel;
 
+import Shyrick.User;
 import Shyrick.UserController;
 
 import java.util.HashMap;
@@ -11,7 +12,8 @@ public class TextInterface {
 
     private Scanner scanner = new Scanner(System.in);
     private Shyrick.UserController userController;
-    private UserController.User editedUser;
+    private Shyrick.DAOUser daoUser;
+    private User editedUser;
 
     private static TextInterface interFace;
     private Map<String,Map> loginMenu = new HashMap<>();
@@ -23,7 +25,7 @@ public class TextInterface {
     private Map<String,Map> adminMenu = new HashMap<>();
     private Map<String,Map> userMenu  = new HashMap<>();
 
-    private Shyrick.UserController.User you = null;
+    private Shyrick.User you = null;
 
     public static void create(UserController userController) {
         interFace = new TextInterface(userController);
@@ -177,7 +179,9 @@ public class TextInterface {
 //            "remove"
 
             case "Вывести список пользователей на экран":
-                userController.showUsers();
+                daoUser.showUsers();
+            case "list users":
+
                 break;
             case "Добавить пользователя":
                 addUser();
@@ -258,7 +262,7 @@ public class TextInterface {
         }
 
         if (userController.getTempUser()!= null) {
-            if (userController.getTempUser().isAdmin()) {
+            if (userController.getTempUser().getIsAdmin()) {
                 runTUI(interFace.getAdminMenu());
             }
             else {

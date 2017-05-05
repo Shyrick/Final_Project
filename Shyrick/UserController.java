@@ -1,88 +1,80 @@
 package Shyrick;
 
-import Final_Project.Users.DAO;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-public class UserController implements DAO {
+public class UserController {
 
     private   int  id = 0;
-    private List<User> usersList = new ArrayList<>();
-    private User tempUser;
+   DAOUser daoUser = new DAOUser();
 
-    File file = new File("UsersList.txt");
+    public User tempUser;
 
-    @Override
-    public List load() {
-        readDB();
-        return usersList;
-    }
-
-    @Override
-    public void save() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
-            for (int i = 0; i < usersList.size(); i++) {
-                writer.write(usersList.get(i).getId() + " "
-                        + usersList.get(i).getLogin() + " "
-                        + usersList.get(i).getFirstName() + " "
-                        +  usersList.get(i).getLastName() + " "
-                        + usersList.get(i).isAdmin);
-                if (i < usersList.size() - 1)  writer.write( "\n");
-                writer.flush();
-            }
-            } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
-
-    public void readDB (){
-
-        int i = 0;
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-
-                byte id = scanner.nextByte();
-                String login = scanner.next();
-                String firstName = scanner.next();
-                String lastName = scanner.next();
-                boolean isAdmin = scanner.nextBoolean();
-                usersList.add(createUserFromFile(id, login, firstName, lastName, isAdmin));
-                this.id = id;
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Ошибка во время чтения файла");
-            e.printStackTrace();
-        }
-
-    }
-
-    public void showUsers() {
-        usersList.forEach(System.out::println);
-    }
 
     private  User createUser(String login, String firstName, String lastName){
-         id ++;
+
+         id = daoUser.getUserFromList(daoUser.getUserListSize()-1).getId() + 1;
         return new User(id, login, firstName, lastName, false);
     }
 
-    private  User createUserFromFile(int id, String login, String firstName, String lastName, boolean isAdmin){
-        return new User(id, login, firstName, lastName, isAdmin);
+    private Shyrick.User createAdmin(String login, String firstName, String lastName){
+
+        id = daoUser.getUserFromList(daoUser.getUserListSize()-1).getId() + 1;
+        return new Shyrick.User(id, login, firstName, lastName, true);
+    }
+
+    public void login (){
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите логин (и нажмите Enter)");
+        String login = scanner.nextLine();
+        int flag1 = 0;
+        int indexOfUser = 0;
+
+        if (daoUser.getUserListSize() != 0 ) {
+
+            do {
+                flag1 = 0;
+                for (int i = 0; i < daoUser.getUserListSize(); i++) {
+                    if (daoUser.getUserFromList(i).getLogin().equals(login)) {
+                        flag1 = 1;
+                        indexOfUser = i;
+                        break;
+                    }
+                }
+                if (flag1 == 0) {
+                    System.out.println("Неверный логин. Повторите ввод логина");
+
+                    login = scanner.nextLine();
+                }
+
+            } while (flag1 == 0);
+        }
+        tempUser = daoUser.getUserFromList(indexOfUser);
+        System.out.println("Добро пожаловать " + tempUser.getFirstName() + " " + tempUser.getLastName() );
+        System.out.println();
+
+
+        if (tempUser.getIsAdmin()) System.out.println("вызов меню админа");
+        else  System.out.println("вызов меню пользователя");
+
+//      Вызом меню пользователя
+//        menu.userMainMenu();
     }
 
     public void registerUser() {
         Scanner scanner = new Scanner(System.in);
+        Menu menu = new Menu();
+
         System.out.println("Введите логин");
         String login = scanner.nextLine();
-        int flag1;
+        int flag1 = 0;
+        if (daoUser.getUserListSize() != 0 ){
 
-        if (usersList.size() != 0 ){
             do {
                 flag1 = 0;
-                for (int i = 0; i < usersList.size() ; i++) {
-                    if (usersList.get(i).login.equals(login)){
+                for (int i = 0; i < daoUser.getUserListSize() ; i++) {
+                    if (daoUser.getUserFromList(i).getLogin().equals(login)){
                         flag1 = 1;
                         break;
                     }
@@ -101,23 +93,73 @@ public class UserController implements DAO {
         System.out.println("Введите Фамилию");
         String lastName = scanner.nextLine();
 
-        usersList.add(createUser(login, firstName, lastName));
-        tempUser = usersList.get(usersList.size()-1);
+        daoUser.addUserToList(createUser(login, firstName, lastName));
 
-        System.out.println("Пользователь " + usersList.get(usersList.size()-1).firstName + " " +
-                usersList.get(usersList.size()-1).lastName + " Логин - " + usersList.get(usersList.size()-1).login +"  успешно зарегистрирован");
+        tempUser = daoUser.getUserFromList(daoUser.getUserListSize()-1);
 
-// Добавить запись пользователя в файл
-        save();
-//        usersMenu();
+        System.out.println("Пользователь " + tempUser.getFirstName() + " " +
+                tempUser.getLastName() + " Логин - " + tempUser.getLogin() +"  успешно зарегистрирован");
+        System.out.println();
 
+        daoUser.writeInDB();
+
+        System.out.println("вызов меню пользователя");
+//      Вызом меню пользователя
+//        menu.userMainMenu();
+    }
+
+    public void registerAdmin() {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите логин");
+        String login = scanner.nextLine();
+        int flag1 = 0;
+        if (daoUser.getUserListSize() != 0 ){
+
+            do {
+                flag1 = 0;
+                for (int i = 0; i < daoUser.getUserListSize() ; i++) {
+                    if (daoUser.getUserFromList(i).getLogin().equals(login)){
+                        flag1 = 1;
+                        break;
+                    }
+                }
+                if (flag1 == 1){
+                    System.out.println("Такой логин уже зарегистрирован");
+                    System.out.println("Введите логин");
+                    login = scanner.nextLine();
+                }
+
+            } while (flag1 == 1);
+        }
+        System.out.println("Введите Имя");
+        String firstName = scanner.nextLine();
+
+        System.out.println("Введите Фамилию");
+        String lastName = scanner.nextLine();
+
+        daoUser.addUserToList(createAdmin(login, firstName, lastName));
+
+        tempUser = daoUser.getUserFromList(daoUser.getUserListSize()-1);
+
+        System.out.println("Администратор " + tempUser.getFirstName() + " " +
+                tempUser.getLastName() + " Логин - " + tempUser.getLogin() +"  успешно зарегистрирован");
+        System.out.println();
+
+        daoUser.writeInDB();
+
+        System.out.println("вызов меню администратора");
+//      Вызом меню пользователя
+//        menu.adminMainMenu();
     }
 
     public void editeUser() {
 
         String login = tempUser.getLogin();
+        Menu menu = new Menu();
 
-        if (usersList.size() != 0 ){
+        if (daoUser.getUserListSize() != 0 ){
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("Введите новое Имя");
@@ -125,136 +167,84 @@ public class UserController implements DAO {
             System.out.println("Введите новоую Фамилию");
             String newLastName = scanner.nextLine();
 
-            for (int i = 0; i < usersList.size() ; i++) {
+            for (int i = 0; i <daoUser.getUserListSize() ; i++) {
 
-                if (usersList.get(i).login.equals(login)){
-                    usersList.get(i).setFirstName(newFirstName);
-                    usersList.get(i).setLastName(newLastName);
+                if (daoUser.getUserFromList(i).getLogin().equals(login)){
+                    daoUser.getUserFromList(i).setFirstName(newFirstName);
+                    daoUser.getUserFromList(i).setLastName(newLastName);
 
                     System.out.println("Данные пользователя успешно изменены");
-                    save();
                     break;
                 }
             }
 
         } else System.out.println("Еще нет ни одного пользователя");
+
+        System.out.println("Вызов меню пользователя");
+//      Вызом меню пользователя
+//        menu.userMainMenu();
+
     }
 
     public void deleteUser(){
 
         String login = tempUser.getLogin();
+        Menu menu = new Menu();
+        Scanner scanner = new Scanner(System.in);
+
         int indexOfUser = 0;
-        if (usersList.size() != 0 ) {
-            for (int i = 0; i < usersList.size(); i++) {
 
-                if (usersList.get(i).login.equals(login)) {
-                    indexOfUser = i;
-                    break;
-                }
+        for (int i = 0; i < daoUser.getUserListSize(); i++) {
+
+            if (daoUser.getUserFromList(i).getLogin().equals(login)) {
+                indexOfUser = i;
+                break;
             }
+        }
 
-            System.out.println("Вы действительно хотите удалить Пользователя " + usersList.get(indexOfUser).firstName + " " +
-                    usersList.get( indexOfUser).lastName + " Логин - " + usersList.get( indexOfUser).login +"  ?");
-            System.out.println("Для подтверждения нажмите 1 и Enter, для отмены - любую клавишу и Enter");
+        System.out.println("Вы действительно хотите удалить Пользователя " + daoUser.getUserFromList(indexOfUser).getFirstName() + " " +
+                daoUser.getUserFromList(indexOfUser).getLastName() + " Логин - " + daoUser.getUserFromList(indexOfUser).getLogin() +"  ?");
+        System.out.println("Для подтверждения нажмите 1 и Enter, для отмены - любую клавишу и Enter");
 
-            Scanner scanner = new Scanner(System.in);
-            byte confirm = scanner.nextByte();
 
-    // Как защитить от ввода не числа???
-//            String confirm = scanner.nextLine();
-//            if (confirm.equals(1))
-//          Не работает!!!
+        byte confirm = 0;
+        if (scanner.hasNextByte()){
+            confirm = scanner.nextByte();
+        } else System.out.println("Не хотите удаляться? Верное решение!");
 
-            if (confirm == 1){
+        if (confirm == 1){
 
-                usersList.remove(usersList.get(indexOfUser));
-                save();
-                System.out.println("Даннне пользователя успешно удалены");
+            daoUser.removeUserFromList(daoUser.getUserFromList(indexOfUser));
+            System.out.println("Даннне пользователя успешно удалены");
+        }
 
-            }else System.out.println("Ну и ладно");
+        System.out.println("Вызов меню пользователя");
+//      Вызом меню пользователя
+//        menu.userMainMenu();
 
-        } else System.out.println("Удаление невозможно. Еще нет ни одного пользователя");
 
- //       usersMenu();
+
     }
 
-    public User findById(int id) {
-        return usersList.stream().filter(u->u.getId() == id).findFirst().orElse(null);
+    public User findById(int id){
+        System.out.println("Нужно написть метод findById");
+        return null;
     }
 
-    public User findByLogin(String str) {
-        return usersList.stream().filter(u->u.getLogin().equals(str)).findFirst().orElse(null);
+    public User findByLogin(String login){
+        System.out.println("Нужно написть метод findByLogin");
+        return null;
     }
 
-    public User getTempUser() {
+    public void setTempUser(User user){
+        tempUser = user;
+    }
+
+    public User getTempUser(){
         return tempUser;
     }
 
-    public void setTempUser(User tempUser) {
-        this.tempUser = tempUser;
-    }
-
     public boolean hasLogin(String login) {
-        return usersList.stream().filter(user -> user.getLogin().equals(login)).findFirst().orElse(null)!= null;
-    }
-
-    public static class User{
-
-        private   int id;
-        private String login;
-        private String firstName;
-        private String lastName;
-        private boolean isAdmin;
-
-        public User(int id, String login, String firstName, String lastName, boolean isAdmin) {
-            this.id = id;
-            this.login = login;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.isAdmin = isAdmin;
-        }
-
-
-        @Override
-        public String toString() {
-            String str = isAdmin?"Админ \t":"Клиент \t";
-            return str +
-                    "id - " + id +
-                    ",\tлогин - " + login +
-                    ",\tимя - " + firstName +
-                    ",\tфамилия - " + lastName;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getLogin() {
-            return login;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public boolean isAdmin() {
-            return isAdmin;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public void setAdmin(boolean admin) {
-            isAdmin = admin;
-        }
+        return true; // нужно написать //usersList.stream().filter(user -> user.getLogin().equals(login)).findFirst().orElse(null)!= null;
     }
 }

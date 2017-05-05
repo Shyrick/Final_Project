@@ -1,5 +1,6 @@
 package crazyjedi;
 
+import Shyrick.User;
 import Shyrick.UserController;
 
 import java.time.Instant;
@@ -15,12 +16,12 @@ public class Booking {
     private static AtomicLong counter = new AtomicLong(0);
     private long id;
     private Room room;
-    private UserController.User user;
+    private User user;
     private Date dateBegin;
     private Date dateEnd;
     private Hotel hotel;
 
-    public Booking(UserController.User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
+    public Booking(User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
 
         if(user==null||dateBegin==null||dateEnd==null||hotel==null||room==null){
             throw new IllegalArgumentException("No null field allowed");
@@ -41,7 +42,7 @@ public class Booking {
         return room;
     }
 
-    public UserController.User getUser() {
+    public User getUser() {
         return user;
     }
 
