@@ -12,18 +12,18 @@ import java.util.stream.Collectors;
 public class Hotel {
 
     private int id;
-    private int cityId;
+    private String city;
     private String name;
     private List<Room> rooms = null;
 
-    public Hotel(int id, int cityId, String name) {
+    public Hotel(int id, String city, String name) {
         this.id=id;
-        this.cityId = cityId;
+        this.city = city;
         this.name = name;
         rooms=new ArrayList<>();
     }
 
-    public List<String> getRoomIds(){
+    public List<String> getRoomStringIds(){
         List<String> res = new ArrayList<>();
         for (Room room : this.getRooms()) {
             res.add(Integer.toString(room.getId()));
@@ -35,12 +35,12 @@ public class Hotel {
         return id;
     }
 
-    public int getCityId() {
-        return cityId;
+    public String getCity() {
+        return city;
     }
 
-    public void setCityId(int cityId) {
-        this.cityId = cityId;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getName() {
@@ -79,9 +79,31 @@ public class Hotel {
     public String toString() {
         return "Hotel{" +
                 "id=" + id +
-                ", cityId=" + cityId +
+                ", cityId=" + city +
                 ", name='" + name + '\'' +
                 ", rooms=" + rooms +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Hotel hotel = (Hotel) o;
+
+        if (getId() != hotel.getId()) return false;
+        if (!city.equals(hotel.city)) return false;
+        if (!getName().equals(hotel.getName())) return false;
+        return getRooms().equals(hotel.getRooms());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + city.hashCode();
+        result = 31 * result + getName().hashCode();
+        result = 31 * result + getRooms().hashCode();
+        return result;
     }
 }

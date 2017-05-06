@@ -46,4 +46,24 @@ public class Room {
                 ", price=" + price +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Room room = (Room) o;
+
+        if (getId() != room.getId()) return false;
+        if (getPerson() != room.getPerson()) return false;
+        return getPrice() != null ? getPrice().equals(room.getPrice()) : room.getPrice() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId();
+        result = 31 * result + (int) getPerson();
+        result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
+        return result;
+    }
 }

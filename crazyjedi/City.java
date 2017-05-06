@@ -7,15 +7,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class City {
 
-    private AtomicInteger counter = new AtomicInteger(0);
+
     private int id;
     private String name;
 
-    public City(String name) throws IllegalArgumentException{
+    public City(int id, String name) throws IllegalArgumentException{
         if(name==null||name.length()==0){
             throw new IllegalArgumentException("City name must be filled.");
         }
-        this.id = counter.getAndIncrement();
+        this.id=id;
         this.name = name;
     }
 
@@ -42,5 +42,10 @@ public class City {
         return getName().hashCode();
     }
 
-
+    @Override
+    public String toString() {
+        return "City{id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
