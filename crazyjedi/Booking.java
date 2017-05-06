@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Booking {
 
-    private static AtomicLong counter = new AtomicLong(0);
+
     private long id;
     private Room room;
     private User user;
@@ -21,13 +21,13 @@ public class Booking {
     private Date dateEnd;
     private Hotel hotel;
 
-    public Booking(User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
+    public Booking(long id, User user, Date dateBegin, Date dateEnd, Hotel hotel, Room room) throws IllegalArgumentException{
 
         if(user==null||dateBegin==null||dateEnd==null||hotel==null||room==null){
             throw new IllegalArgumentException("No null field allowed");
         }
 
-        id=counter.incrementAndGet();
+        this.id=id;
         this.user = user;
         this.dateBegin = dateBegin;
         this.dateEnd = dateEnd;

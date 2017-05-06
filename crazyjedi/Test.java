@@ -121,6 +121,8 @@ public class Test {
             System.out.println(hotel);
         }
 
-
+        //TEST BOOKINGS
+//        BookingManager bm = new BookingManager()
+//        System.out.println("");
     }
 }

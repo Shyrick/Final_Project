@@ -1,7 +1,10 @@
 package crazyjedi;
+import java.awt.print.Book;
 import java.io.*;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,10 +18,14 @@ public class DBManager{
     private String roomFilePath;
     private String hotelFilePath;
     private String cityFilePath;
+    private String bookingsFilePath;
+    private DateFormat df;
     public DBManager() {
         this.cityFilePath = currentDir+"cityDB.tsv";
         this.roomFilePath = currentDir+"roomDB.tsv";
         this.hotelFilePath = currentDir+"hotelDB.tsv";
+        this.bookingsFilePath = currentDir+"bookingsDB.tsv";
+        df = new SimpleDateFormat("dd/MM/yyyy");
         createDBStructure();
 
     }
@@ -30,6 +37,8 @@ public class DBManager{
             f = new File(roomFilePath);
             f.createNewFile();
             f = new File(hotelFilePath);
+            f.createNewFile();
+            f = new File(bookingsFilePath);
             f.createNewFile();
         } catch (IOException ex)
         {
@@ -252,8 +261,78 @@ public class DBManager{
         File citiesFile = new File(this.cityFilePath);
         if(citiesFile.exists()) citiesFile.delete();
 
+        File bookingsFile = new File(this.bookingsFilePath);
+        if(bookingsFile.exists()) bookingsFile.delete();
+
         createDBStructure();
     }
 
+
+    //LOAD/DUMP BOOKINGS
+
+    public void dumpBookingsDB(List<Booking> bookings) {
+        File bookingsFile = new File(this.bookingsFilePath);
+        try{
+            bookingsFile.getParentFile().mkdirs();
+            bookingsFile.createNewFile();
+
+            Function<Booking,String> bookingStringJoin = booking -> Long.toString(booking.getId())+
+                    "\t"+df.format(booking.getDateBegin())+
+                    "\t"+df.format(booking.getDateEnd())+
+                    "\t"+Integer.toString(booking.getUser().getId())+
+                    "\t"+Integer.toString(booking.getHotel().getId())+
+                    "\t"+Integer.toString(booking.getRoom().getId())
+                    +"\n";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(bookingsFile));
+            for (String bookingStream : bookings.stream().map(bookingStringJoin).collect(Collectors.toList())) {
+                writer.write(bookingStream);
+            }
+            writer.close();
+        } catch (IOException ex) {
+            throw new Error("Can't write booking table!");
+        }
+    }
+
+    public DateFormat getDf() {
+        return df;
+    }
+
+    public List<List<String>> readBookingDB(){
+        List<List<String>> res = new ArrayList<>();
+
+        String line;
+        List<String> bookingBlueprints = new ArrayList<>();
+        BufferedReader reader = null;
+        try{
+            reader = new BufferedReader(new FileReader(this.bookingsFilePath));
+            while((line = reader.readLine()) != null){
+                bookingBlueprints.add(line);
+            }
+        } catch (IOException ex){
+            throw new Error("Can't read rooms table!");
+        } finally {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+        for (String bookingBlueprint : bookingBlueprints) {
+            ArrayList<String> tempBooking = new ArrayList<>();
+            Scanner sc = new Scanner(bookingBlueprint);
+            sc.useDelimiter("\t");
+            while(sc.hasNext()){
+                tempBooking.add(sc.next());
+            }
+            res.add(tempBooking);
+
+        }
+        return res;
+
+    }
 
 }
