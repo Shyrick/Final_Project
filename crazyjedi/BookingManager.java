@@ -1,15 +1,10 @@
 package crazyjedi;
 
 import Shyrick.User;
-import Shyrick.UserController;
 
-import java.awt.print.Book;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by Vlad on 30.04.2017.
@@ -116,6 +111,10 @@ public class BookingManager {
             }
         }
         return true;
+    }
+
+    public HotelManager getHotelManager() {
+        return hotelManager;
     }
 
     //GET USERS FROM BOOKINGS
