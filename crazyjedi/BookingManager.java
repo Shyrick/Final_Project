@@ -1,15 +1,10 @@
 package crazyjedi;
 
 import Shyrick.User;
-import Shyrick.UserController;
 
-import java.awt.print.Book;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by Vlad on 30.04.2017.
@@ -55,28 +50,48 @@ public class BookingManager {
     }
 
     public List<Booking> getByRoom(Room room){
-        return bookingList.stream().filter(booking -> booking.getRoom().equals(room)).collect(Collectors.toList());
+        if(hotelManager.getHotels().stream().anyMatch(hotel -> hotel.getRooms().contains(room))){
+            return bookingList.stream().filter(booking -> booking.getRoom().equals(room)).collect(Collectors.toList());
+        }
+        else return null;
     }
 
     public List<Booking> getByRoomId(int roomId){
+        Room room = hotelManager.findRoomById(roomId);
+        if(room==null) return null;
         return bookingList.stream().filter(booking -> booking.getRoom().getId()==roomId).collect(Collectors.toList());
     }
 
     //ADDING NEW BOOKING
 
-    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, int roomId){
+    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, int roomId) throws IllegalArgumentException{
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         Room tempRoom = hotelManager.findRoomById(roomId);
-        Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,tempRoom);
+        if(tempHotel!=null&&tempRoom!=null){
+            Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,tempRoom);
+            this.bookingList.add(tempBooking);
+        }else {
+            throw new IllegalArgumentException("No room or hotel found!");
+        }
     }
 
-    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, Room room){
+    public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, Room room) throws IllegalArgumentException{
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
-        Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,room);
+        if(tempHotel!=null&&tempHotel.getRooms().contains(room)){
+            Booking tempBooking = new Booking(user,dateBegin,dateEnd,tempHotel,room);
+            this.bookingList.add(tempBooking);
+        }else {
+            throw new IllegalArgumentException("No room or hotel found!");
+        }
     }
 
-    public void addBooking(Date dateBegin, Date dateEnd, User user, Hotel hotel, Room room){
-        Booking tempBooking = new Booking(user,dateBegin,dateEnd,hotel,room);
+    public void addBooking(Date dateBegin, Date dateEnd, User user, Hotel hotel, Room room) throws IllegalArgumentException{
+        if(hotelManager.getHotels().contains(hotel)&&hotel.getRooms().contains(room)){
+            Booking tempBooking = new Booking(user,dateBegin,dateEnd,hotel,room);
+            this.bookingList.add(tempBooking);
+        }else {
+            throw new IllegalArgumentException("No room or hotel found!");
+        }
     }
 
     //REMOVING BOOKING
@@ -90,6 +105,7 @@ public class BookingManager {
     public  boolean checkBookingPossible(Date dateBegin, Date dateEnd, Room room){
         //Если дата начала и дата конца не попадают ни в один из существующих промежутков бронирования, вернуть true
         List<Booking> bookingsOfRoom = this.getByRoom(room);
+        if(bookingsOfRoom==null) return false;
         for (Booking booking:bookingsOfRoom) {
             if(booking.getDateBegin().compareTo(dateBegin)>=0&&booking.getDateBegin().compareTo(dateEnd)<=0){
                 return false;
@@ -97,6 +113,7 @@ public class BookingManager {
             if(booking.getDateEnd().compareTo(dateBegin)>=0&&booking.getDateEnd().compareTo(dateEnd)<=0){
                 return false;
             }
+
         }
         return true;
     }
@@ -104,6 +121,7 @@ public class BookingManager {
     public  boolean checkBookingPossible(Date dateBegin, Date dateEnd, int roomId){
         //Если дата начала и дата конца не попадают ни в один из существующих промежутков бронирования, вернуть true
         List<Booking> bookingsOfRoom = this.getByRoomId(roomId);
+        if(bookingsOfRoom==null) return false;
         for (Booking booking:bookingsOfRoom) {
             if(booking.getDateBegin().compareTo(dateBegin)>=0&&booking.getDateBegin().compareTo(dateEnd)<=0){
                 return false;

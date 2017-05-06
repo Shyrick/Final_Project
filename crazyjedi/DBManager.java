@@ -1,7 +1,6 @@
 package crazyjedi;
 import java.io.*;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -15,32 +14,98 @@ public class DBManager{
     String currentDir = System.getProperty("user.dir")+"/crazyjedi/db/";
     private String roomFilePath;
     private String hotelFilePath;
+    private String cityFilePath;
+    public DBManager() {
+        this.cityFilePath = currentDir+"cityDB.tsv";
+        this.roomFilePath = currentDir+"roomDB.tsv";
+        this.hotelFilePath = currentDir+"hotelDB.tsv";
+        createDBStructure();
 
-    public DBManager(String roomFilePath, String hotelFilePath) {
-        this.roomFilePath = currentDir+roomFilePath;
-        this.hotelFilePath = currentDir+hotelFilePath;
     }
 
-    public String getRoomFilePath() {
-        return roomFilePath;
+    public void createDBStructure(){
+        try{
+            File f = new File(cityFilePath);
+            f.createNewFile();
+            f = new File(roomFilePath);
+            f.createNewFile();
+            f = new File(hotelFilePath);
+            f.createNewFile();
+        } catch (IOException ex)
+        {
+            throw new Error("Can't initialize the DB");
+        }
     }
 
-    public void setRoomFilePath(String roomFilePath) {
-        this.roomFilePath = roomFilePath;
+//    public String getRoomFilePath() {
+//        return roomFilePath;
+//    }
+//
+//    public void setRoomFilePath(String roomFilePath) {
+//        this.roomFilePath = roomFilePath;
+//    }
+//
+//    public String getHotelFilePath() {
+//        return hotelFilePath;
+//    }
+//
+//    public void setHotelFilePath(String hotelFilePath) {
+//        this.hotelFilePath = hotelFilePath;
+//    }
+
+
+    //READ-WRITE CITIES
+
+    public void dumpCityDB(Set<City> cities) {
+        File cityFile = new File(this.cityFilePath);
+        try{
+            cityFile.getParentFile().mkdirs();
+            cityFile.createNewFile();
+            Function<City,String> cityStringJoin = city -> Integer.toString(city.getId())+
+                    "\t"+city.getName()+"\n";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(cityFile));
+            for (String cityString : cities.stream().map(cityStringJoin).collect(Collectors.toList())) {
+                writer.write(cityString);
+            }
+            writer.close();
+        } catch (IOException ex) {
+            throw new Error("Can't write cities table!");
+        }
     }
 
-    public String getHotelFilePath() {
-        return hotelFilePath;
-    }
+    public Set<City> readCitiesDB() {
+        String line;
+        List<String> cityBlueprints = new ArrayList<>();
+        BufferedReader reader = null;
+        Set<City> cities = new HashSet<>();
+        try{
+            reader = new BufferedReader(new FileReader(this.cityFilePath));
+            while((line = reader.readLine()) != null){
+                cityBlueprints.add(line);
+            }
+        } catch (IOException ex){
+            throw new Error("Can't read cities table!");
+        } finally {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-    public void setHotelFilePath(String hotelFilePath) {
-        this.hotelFilePath = hotelFilePath;
-    }
-
-    private String roomStringJoin(Room room){
-        return Integer.toString(room.getId())+
-                    "\t"+Byte.toString(room.getPerson())+
-                    "\t"+room.getPrice().toString();
+        for (String cityBlueprint: cityBlueprints) {
+            ArrayList<String> tempCity = new ArrayList<>();
+            Scanner sc = new Scanner(cityBlueprint);
+            sc.useDelimiter("\t");
+            while(sc.hasNext()){
+                tempCity.add(sc.next());
+            }
+            int id = Integer.parseInt(tempCity.get(0));
+            String name = tempCity.get(1);
+            cities.add(new City(id,name));
+        }
+        return cities;
     }
 
     //READ-WRITE ROOM
@@ -107,9 +172,9 @@ public class DBManager{
             hotelFile.createNewFile();
 
             Function<Hotel,String> hotelStringJoin = hotel -> Integer.toString(hotel.getId())+
-                    "\t"+Integer.toString(hotel.getCityId())+
+                    "\t"+hotel.getCity()+
                     "\t"+hotel.getName()+
-                    "\t"+String.join(";",hotel.getRoomIds().stream().collect(Collectors.toList()))+"\n";
+                    "\t"+String.join(";",hotel.getRoomStringIds().stream().collect(Collectors.toList()))+"\n";
             BufferedWriter writer = new BufferedWriter(new FileWriter(hotelFile));
             for (String hotelString : hotels.stream().map(hotelStringJoin).collect(Collectors.toList())) {
                 writer.write(hotelString);
@@ -153,7 +218,7 @@ public class DBManager{
                 tempHotels.add(sc.next());
             }
             int id = Integer.parseInt(tempHotels.get(0));
-            int cityId = Integer.parseInt(tempHotels.get(1));
+            String city = tempHotels.get(1);
             String name = tempHotels.get(2);
             Scanner roomSc = new Scanner(tempHotels.get(3));
             roomSc.useDelimiter(";");
@@ -162,7 +227,7 @@ public class DBManager{
                 roomIds.add(Integer.parseInt(roomSc.next()));
             }
 
-            Hotel tempHotel = new Hotel(id,cityId,name);
+            Hotel tempHotel = new Hotel(id,city,name);
 
 
             List<Room> thisHotelRooms = tempRooms.stream()
@@ -176,5 +241,19 @@ public class DBManager{
         return hotels;
 
     }
+
+    public void truncateDB(){
+        File roomFile = new File(this.roomFilePath);
+        if(roomFile.exists()) roomFile.delete();
+
+        File hotelFile = new File(this.hotelFilePath);
+        if(hotelFile.exists()) hotelFile.delete();
+
+        File citiesFile = new File(this.cityFilePath);
+        if(citiesFile.exists()) citiesFile.delete();
+
+        createDBStructure();
+    }
+
 
 }
