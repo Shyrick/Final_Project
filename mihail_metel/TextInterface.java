@@ -218,7 +218,7 @@ public class TextInterface {
             Date dateBegin = getDate();
             Date dateEnd = getDate();
             System.out.println("Доступные города");
-            System.out.println(hotelManager.cities);
+            //System.out.println(hotelManager.cities);
             System.out.println("Введите ID");
             int cityId = scanner.nextByte();
             System.out.println("Доступные отели в городе");
