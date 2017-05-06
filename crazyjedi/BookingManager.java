@@ -202,6 +202,10 @@ public class BookingManager {
         return true;
     }
 
+    public HotelManager getHotelManager() {
+        return hotelManager;
+    }
+
     //GET USERS FROM BOOKINGS
 
 }

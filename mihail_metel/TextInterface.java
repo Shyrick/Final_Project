@@ -2,7 +2,11 @@ package mihail_metel;
 
 import Shyrick.User;
 import Shyrick.UserController;
+import crazyjedi.BookingManager;
+import crazyjedi.Hotel;
+import crazyjedi.HotelManager;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -12,6 +16,8 @@ public class TextInterface {
 
     private Scanner scanner = new Scanner(System.in);
     private Shyrick.UserController userController;
+    private final BookingManager bookingManager;
+    private final HotelManager hotelManager;
     private User editedUser;
 
     private static TextInterface interFace;
@@ -26,12 +32,14 @@ public class TextInterface {
 
     private Shyrick.User you = null;
 
-    public static void create(UserController userController) {
-        interFace = new TextInterface(userController);
+    public static void create(UserController userController, BookingManager bookingManager) {
+        interFace = new TextInterface(userController, bookingManager);
     }
 
-    private TextInterface(UserController userController) {
+    private TextInterface(UserController userController, BookingManager bookingManager) {
         this.userController = userController;
+        this.bookingManager = bookingManager;
+        this.hotelManager = bookingManager.getHotelManager();
 
         try{
             // structure of login menu:     login-register-exit
@@ -86,8 +94,8 @@ public class TextInterface {
             userMenu.get("Поиск отелей").put("find by name", null);
             userMenu.get("Поиск отелей").put("find by city", null);
 
-            userMenu.get("Редактировать персональные данные").put("edit", null);
-            userMenu.get("Редактировать персональные данные").put("remove", null);
+            userMenu.get("Персональные данные").put("Редактировать свои данные", null);
+            userMenu.get("Персональные данные").put("Удалить свои данные", null);
 
             userMenu.get("Действия со своими бронированиями").put("add", null);
             userMenu.get("Действия со своими бронированиями").put("see", null);
@@ -170,17 +178,8 @@ public class TextInterface {
                 break;
             case "Регистрация": register();
                 break;
-
-//            "list users"
-//            "add user"
-//            "add admin"
-//            "edit"
-//            "remove"
-
             case "Вывести список пользователей на экран":
                 userController.showUsers();
-            case "list users":
-
                 break;
             case "Добавить пользователя":
                 addUser();
@@ -200,8 +199,58 @@ public class TextInterface {
             case "Удалить пользователя: найти по Id":
                 removeUserById();
                 break;
-
+            case "Редактировать свои данные":
+                userController.editeUser();
+                break;
+            case "Удалить свои данные":
+                userController.deleteUser();
+                break;
+            case "Сделать бронирование":
+                addBooking();
+                break;
         }
+    }
+
+    private void addBooking() {
+        System.out.println("Введите дату начала бронирования");
+        try{
+            editedUser = userController.getTempUser();
+            Date dateBegin = getDate();
+            Date dateEnd = getDate();
+            System.out.println("Доступные города");
+            //System.out.println(hotelManager.cities);
+            System.out.println("Введите ID");
+            int cityId = scanner.nextByte();
+            System.out.println("Доступные отели в городе");
+            hotelManager.getHotelsByCity(cityId).forEach(System.out::println);
+            System.out.println("Введите ID отеля");
+            int hotelId = scanner.nextByte();
+            Hotel hotel = hotelManager.getHotelsByCity(cityId).get(hotelId);
+            System.out.println("Комнаты доступные для бронирования:");
+            hotel.getRooms().stream().filter(r->
+                bookingManager.checkBookingPossible(dateBegin,dateEnd,r)).forEach(System.out::println);
+            System.out.println("Введите ID комнаты");
+            int roomId = scanner.nextByte();
+
+            bookingManager.addBooking(dateBegin,dateEnd,editedUser,
+                    hotelId, roomId);
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+        }
+
+
+    }
+
+    private Date getDate() throws Exception {
+        Date date;
+        try{
+            date = new Date(getYear(),getMonth(),getDay());
+        }
+        catch (Exception e){
+            throw new RuntimeException("Некорректно введена дата");
+        }
+        return date;
     }
 
     private void removeUserById() {
@@ -270,14 +319,6 @@ public class TextInterface {
         }
     }
 
-    private void removeUser() {
-        userController.deleteUser();
-    }
-
-    private void editUser() {
-        userController.editeUser();
-    }
-
     private void findUserById() {
         System.out.println("Введите ID пользователя");
         editedUser = userController.findById(getId());
@@ -320,23 +361,35 @@ public class TextInterface {
         return scanner.next();
     }
 
-    private int getDuration() {
-        System.out.println("Duration (Days):");
-        return scanner.nextInt();
+    private int getDuration() throws RuntimeException {
+        System.out.println("Продолжительность (дней):");
+        try{return scanner.nextInt();}
+        catch (RuntimeException e){
+            throw new RuntimeException("Ошибка ввода продолжительности");
+        }
     }
 
-    private int getDay() {
-        System.out.println("Since (D): ");
-        return scanner.nextInt();
+    private int getDay() throws RuntimeException  {
+        System.out.println("День: ");
+        try{return scanner.nextInt();}
+        catch (RuntimeException e){
+            throw new RuntimeException("Ошибка ввода дня");
+        }
     }
 
-    private int getMonth() {
-        System.out.println("Since (M):");
-        return scanner.nextInt();
+    private int getMonth() throws RuntimeException  {
+        System.out.println("Месяц:");
+        try{return scanner.nextInt();}
+        catch (RuntimeException e){
+            throw new RuntimeException("Ошибка ввода месяца");
+        }
     }
 
-    private int getYear() {
-        System.out.println("Since (Y):");
-        return scanner.nextInt();
+    private int getYear() throws RuntimeException {
+        System.out.println("Год:");
+        try{return scanner.nextInt();}
+        catch (RuntimeException e){
+            throw new RuntimeException("Ошибка ввода года");
+        }
     }
 }
