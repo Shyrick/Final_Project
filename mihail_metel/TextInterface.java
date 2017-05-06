@@ -3,6 +3,7 @@ package mihail_metel;
 import Shyrick.User;
 import Shyrick.UserController;
 import crazyjedi.BookingManager;
+import crazyjedi.City;
 import crazyjedi.Hotel;
 import crazyjedi.HotelManager;
 
@@ -32,13 +33,13 @@ public class TextInterface {
 
     private Shyrick.User you = null;
 
-    public static void create(UserController userController, BookingManager bookingManager) {
-        interFace = new TextInterface(userController, bookingManager);
+    public static void create(BookingManager bookingManager) {
+        interFace = new TextInterface(bookingManager);
     }
 
-    private TextInterface(UserController userController, BookingManager bookingManager) {
-        this.userController = userController;
+    private TextInterface(BookingManager bookingManager) {
         this.bookingManager = bookingManager;
+        this.userController = bookingManager.getUserController();
         this.hotelManager = bookingManager.getHotelManager();
 
         try{
@@ -53,7 +54,7 @@ public class TextInterface {
             adminMenu.put("Пользователи", new HashMap<String, Map>());
             adminMenu.put("Бронирования", new HashMap<String, Map>());
 
-            adminMenu.get("Отели").put("Добавить", null);
+            adminMenu.get("Отели").put("Добавить отель", null);
             adminMenu.get("Отели").put("Поиск по имени", null);
             adminMenu.get("Отели").put("Поиск по городу", null);
             adminMenu.get("Отели").put("Редактировать отель", null);
@@ -94,8 +95,8 @@ public class TextInterface {
             userMenu.get("Поиск отелей").put("find by name", null);
             userMenu.get("Поиск отелей").put("find by city", null);
 
-            userMenu.get("Персональные данные").put("Редактировать свои данные", null);
-            userMenu.get("Персональные данные").put("Удалить свои данные", null);
+            userMenu.get("Редактировать персональные данные").put("Редактировать свои данные", null);
+            userMenu.get("Редактировать персональные данные").put("Удалить свои данные", null);
 
             userMenu.get("Действия со своими бронированиями").put("add", null);
             userMenu.get("Действия со своими бронированиями").put("see", null);
@@ -115,11 +116,11 @@ public class TextInterface {
         return loginMenu;
     }
 
-    public Map<String, Map> getAdminMenu() {
+    private Map<String, Map> getAdminMenu() {
         return adminMenu;
     }
 
-    public Map<String, Map> getUserMenu() {
+    private Map<String, Map> getUserMenu() {
         return userMenu;
     }
 
@@ -208,6 +209,41 @@ public class TextInterface {
             case "Сделать бронирование":
                 addBooking();
                 break;
+            case "Добавить отель":
+                addHotel();
+                break;
+
+        }
+    }
+
+    private void addHotel() {
+        System.out.println("Введите название отеля");
+        String hotelName = scanner.next();
+        City city = addOrSelectCity();
+        hotelManager.createHotel(city.getId(),hotelName);
+    }
+
+    private City addOrSelectCity() {
+        System.out.println("1. Выбрать город");
+        System.out.println("2. Добавить город");
+        String str = scanner.next();
+        if (str.equals("1")) {
+            System.out.println("Cуществующие города");
+            hotelManager.getCities().forEach(System.out::println);
+            System.out.println("Введите номер города");
+            int cityId = scanner.nextInt();
+
+            return hotelManager.getCities().stream().filter(c->c.getId() == cityId).findFirst().orElse(null);
+        } else if (str.equals("2")) {
+            System.out.println("Введите город отеля");
+            String cityName = scanner.next();
+            hotelManager.addCity(cityName);
+
+            return hotelManager.getCities().stream().filter(c->c.getName().equals(cityName)).findFirst().orElse(null);
+        }
+        else {
+            System.out.println("Город не удалось создать или найти");
+            return null;
         }
     }
 
@@ -218,7 +254,7 @@ public class TextInterface {
             Date dateBegin = getDate();
             Date dateEnd = getDate();
             System.out.println("Доступные города");
-            //System.out.println(hotelManager.cities);
+            System.out.println(hotelManager.getCities());
             System.out.println("Введите ID");
             int cityId = scanner.nextByte();
             System.out.println("Доступные отели в городе");
@@ -232,8 +268,7 @@ public class TextInterface {
             System.out.println("Введите ID комнаты");
             int roomId = scanner.nextByte();
 
-            bookingManager.addBooking(dateBegin,dateEnd,editedUser,
-                    hotelId, roomId);
+            bookingManager.addBooking(dateBegin, dateEnd, editedUser, hotelId, roomId);
         }
         catch (Exception e){
             System.out.println(e.toString());

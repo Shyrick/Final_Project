@@ -13,7 +13,7 @@ public class HotelManagementSystem {
         BookingManager bookingManager = new BookingManager(hotelManager, userController);
         // HotelManager
         // BookingManager
-        TextInterface.create(userController, bookingManager); // менеджеры должны быть переданы как параметры, потом надо добавить и контроллеры отелей и букингов
+        TextInterface.create(bookingManager); // менеджеры должны быть переданы как параметры, потом надо добавить и контроллеры отелей и букингов
         TextInterface.getInterFace().runTUI(TextInterface.getInterFace().getLoginMenu());
         TextInterface.getInterFace().getScanner().close();
     }
