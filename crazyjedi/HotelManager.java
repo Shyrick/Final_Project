@@ -18,8 +18,11 @@ public class HotelManager {
     private DBManager dbm = new DBManager();
 
     public HotelManager() {
+        this.setHotels(new ArrayList<>());
+        List<Hotel>tmp=dbm.readHotelsDB();
         try{
-            this.hotels = dbm.readHotelsDB();
+
+            this.setHotels(dbm.readHotelsDB());
 
             try {
                 roomMaxId.set(dbm.readRoomsDB().stream().map(Room::getId).max(Integer::compareTo).get()+1);
@@ -32,7 +35,7 @@ public class HotelManager {
                 hotelMaxId.set(0);
             }
         }catch (Exception ex){
-            this.setHotels(new ArrayList<>());
+
         }
         try{
             setCities(dbm.readCitiesDB());

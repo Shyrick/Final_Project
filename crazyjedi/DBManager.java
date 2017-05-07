@@ -229,16 +229,16 @@ public class DBManager{
             int id = Integer.parseInt(tempHotels.get(0));
             String city = tempHotels.get(1);
             String name = tempHotels.get(2);
-            Scanner roomSc = new Scanner(tempHotels.get(3));
-            roomSc.useDelimiter(";");
             Set<Integer> roomIds = new HashSet<>();
-            while(roomSc.hasNext()){
-                roomIds.add(Integer.parseInt(roomSc.next()));
+            if(tempHotels.size()==4){
+                Scanner roomSc = new Scanner(tempHotels.get(3));
+                roomSc.useDelimiter(";");
+                while(roomSc.hasNext()){
+                    roomIds.add(Integer.parseInt(roomSc.next()));
+                }
             }
 
             Hotel tempHotel = new Hotel(id,city,name);
-
-
             List<Room> thisHotelRooms = tempRooms.stream()
                     .filter(room -> roomIds.contains(room.getId()))
                     .collect(Collectors.toList());

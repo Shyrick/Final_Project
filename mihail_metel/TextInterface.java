@@ -232,9 +232,10 @@ public class TextInterface {
                 byte persons = scanner.nextByte();
                 System.out.println("Введите количество таких комнат");
                 int count = scanner.nextInt();
+
                 for (int i = 0; i < count; i++) {
                     Hotel hotel = hotelManager.findHotelById(hotelId);
-                    hotel.addRoom(new Room(hotel.getMaxRoomId() + 1 , persons, new BigDecimal(price)));
+                    hotelManager.createRoom(hotel, persons, new BigDecimal(price));
                 }
 
                 System.out.println("Хотите ли добавить еще комнаты в этот отель? \n1. Да\n2. Нет  ");
@@ -298,7 +299,7 @@ public class TextInterface {
             bookingManager.addBooking(dateBegin, dateEnd, editedUser, hotelId, roomId);
         }
         catch (Exception e){
-            System.out.println(e.toString());
+            System.out.println("Не удалось создать бронирование");
         }
 
 
