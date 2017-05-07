@@ -54,6 +54,8 @@ UserController userController = new UserController();
             System.out.println("1 -  Изменить личные данные");
             System.out.println("2 -  Удалить пользователя");
             System.out.println("3 -  Показать список пользователей");
+            System.out.println("4 - Поиск отеля по названию");
+            System.out.println("5 - Поиск отеля по городу");
 
             choise = scanner.nextByte();
 
@@ -61,9 +63,39 @@ UserController userController = new UserController();
             if (choise == 2) userController.deleteUser();
             if (choise == 3) {
                 userController.daoUser.showUsers();
-            }else System.out.println("Не верный выбор. Повторите ввод");
+            }
+            if (choise == 4) {
+                System.out.println("Введите название отеля");
+                Scanner name = new Scanner(System.in);
+                boolean flag = false;
+                do {
+                    if(!(name.hasNext()) || !(name.nextLine instanceof String)) {
+                        System.out.println("Некорректные данные! Попробуйте еще раз");
+                    } else flag = true;
+                }while(! flag);
 
-        } while (choise == 1 && choise != 2 && choise != 3);
+                HotelManager hotelManager = new HotelManager();
+                System.out.println(hotelManager.getHotelsByName(name.nextLine()));
+            }
+            if (choise == 5) {
+                System.out.println("Введите название отеля");
+                Scanner name = new Scanner(System.in);
+                boolean flag = false;
+                do {
+                    if(!(name.hasNext()) || !(name.nextLine instanceof String)) {
+                        System.out.println("Некорректные данные! Попробуйте еще раз");
+                    } else flag = true;
+                }while(! flag);
+
+                HotelManager hotelManager = new HotelManager();
+                List<Hotel> result = hotelManager.getHotelsByCity(name.nextLine();
+                for (Hotel iterator : result) {
+                    System.out.println(iterator);
+                }
+            }
+            else System.out.println("Не верный выбор. Повторите ввод");
+
+        } while (choise == 1 && choise != 2 && choise != 3 && choise != 4 && choise != 5);
     }
 
 
