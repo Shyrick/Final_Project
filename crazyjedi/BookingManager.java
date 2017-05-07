@@ -202,6 +202,14 @@ public class BookingManager {
         return true;
     }
 
+    public HotelManager getHotelManager() {
+        return hotelManager;
+    }
+
+    public UserController getUserController() {
+        return userController;
+    }
+
     //GET USERS FROM BOOKINGS
 
 }
