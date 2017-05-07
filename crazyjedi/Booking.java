@@ -83,4 +83,16 @@ public class Booking {
         result = 31 * result + getHotel().hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "id=" + id +
+                ", room=" + room +
+                ", user=" + user +
+                ", dateBegin=" + dateBegin +
+                ", dateEnd=" + dateEnd +
+                ", hotel=" + hotel +
+                '}';
+    }
 }

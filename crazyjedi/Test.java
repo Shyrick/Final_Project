@@ -1,7 +1,11 @@
 package crazyjedi;
 
+import Shyrick.User;
+import Shyrick.UserController;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -122,7 +126,18 @@ public class Test {
         }
 
         //TEST BOOKINGS
-//        BookingManager bm = new BookingManager()
-//        System.out.println("");
+//        UserController uc = new UserController();
+//        User u1 = new User(1,"login1","User1", "User1", false);
+//        User u2 = new User(2,"login2","User2", "User2", false);
+//        User u3 = new User(3,"login3","User3", "User3", false);
+//        User u4 = new User(4,"login4","User4", "User4", false);
+//        User u5 = new User(5,"login5","User5", "User5", false);
+//
+//        BookingManager bm = new BookingManager(hotelManager, uc);
+//
+//        bm.addBooking(new Date(2017,5,1),new Date(2017,5,9),u1,2,3);
+//
+//        System.out.println(bm.getByRoom(hotelManager.findRoomById(3)));
+
     }
 }

@@ -129,9 +129,20 @@ public class HotelManager {
         dbm.dumpHotelDB(this.getHotels());
     }
 
-    //todo реализовать
-    public void updateHotel(int id, Hotel hotel){
-
+    public void updateHotel (int id, Hotel hotel) throws IllegalArgumentException{
+        //Обновляя отель, не забудьте обновить Bookings. Просто запишите и прочитайте их из базы и в бонирования
+        // подтянутся новые данные.
+        removeHotel(id);
+        City curCity = cities.stream()
+                            .filter(city -> hotel.getName().equals(city.getName()))
+                            .findFirst()
+                            .orElse(null);
+        if(curCity!=null) {
+            createHotel(id, curCity.getId(), hotel.getName());
+        }else {
+            throw new IllegalArgumentException("No city with such id!");
+        }
+        dbm.dumpHotelDB(this.hotels);
     }
 
     public Room findRoomById(int roomId){
