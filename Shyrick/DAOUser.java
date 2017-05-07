@@ -41,7 +41,7 @@ public class DAOUser {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("Успешно загружено " +  getUserListSize() + "пользователей");
+        System.out.println("Успешно загружено " +  getUserListSize() + " пользователей");
 
     }
 

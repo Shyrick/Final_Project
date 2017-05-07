@@ -257,4 +257,7 @@ public class HotelManager {
         return getHotels().get(getHotels().size()-1);
     }
 
+    public Hotel findHotelByName(String hotelName) {
+        return hotels.stream().filter(h->h.getName().equals(hotelName)).findFirst().orElse(null);
+    }
 }

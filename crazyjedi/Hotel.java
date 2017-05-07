@@ -3,8 +3,6 @@ package crazyjedi;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * Created by Vlad on 30.04.2017.
@@ -105,5 +103,18 @@ public class Hotel {
         result = 31 * result + getName().hashCode();
         result = 31 * result + getRooms().hashCode();
         return result;
+    }
+
+    public int getMaxRoomId() {
+        int maxId = 0;
+        if (rooms != null || rooms.size()!=0) return 0;
+
+        for (int i = 0; i < rooms.size(); i++) {
+            if (maxId < rooms.get(i).getId()) {
+                maxId = rooms.get(i).getId();
+                break;
+            }
+        }
+        return maxId;
     }
 }

@@ -1,12 +1,9 @@
 package mihail_metel;
 
 import Shyrick.User;
-import Shyrick.UserController;
-import crazyjedi.BookingManager;
-import crazyjedi.City;
-import crazyjedi.Hotel;
-import crazyjedi.HotelManager;
+import crazyjedi.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,11 +51,9 @@ public class TextInterface {
             adminMenu.put("Пользователи", new HashMap<String, Map>());
             adminMenu.put("Бронирования", new HashMap<String, Map>());
 
+            adminMenu.get("Отели").put("Показать отели", null);
             adminMenu.get("Отели").put("Добавить отель", null);
-            adminMenu.get("Отели").put("Поиск по имени", null);
-            adminMenu.get("Отели").put("Поиск по городу", null);
-            adminMenu.get("Отели").put("Редактировать отель", null);
-            adminMenu.get("Отели").put("Удалить отель", null);
+            adminMenu.get("Отели").put("Редактировать или удалить отель", null);
 
             adminMenu.get("Пользователи").put("Вывести список пользователей на экран", null);
 
@@ -77,23 +72,20 @@ public class TextInterface {
 
             adminMenu.get("Пользователи").put("Изменить данные", editUserMenu);
             adminMenu.get("Пользователи").put("Удалить", removeUserMenu);
-
-
+            
             adminMenu.get("Бронирования").put("Сделать бронирование", null);
-            adminMenu.get("Бронирования").put("Найти бронирования пользователя", null);
-            adminMenu.get("Бронирования").put("Поис бронирования по ID", null);
-            adminMenu.get("Бронирования").put("Изменить данные бронирования", null);
-            adminMenu.get("Бронирования").put("Отменить бронирование", null);
+            adminMenu.get("Бронирования").put("Изменить или отменить бронирование", null);
 
             //structure of user menu:  hotel -> find by name, find by city
             //                         personal data -> edit, remove
             //                         my bookings -> add, see, edit, cancel
-            userMenu.put("Поиск отелей", new HashMap<String, Map>());
+            userMenu.put("Найти и забронировать номер", new HashMap<String, Map>());
             userMenu.put("Редактировать персональные данные", new HashMap<String, Map>());
             userMenu.put("Действия со своими бронированиями", new HashMap<String, Map>());
 
-            userMenu.get("Поиск отелей").put("find by name", null);
-            userMenu.get("Поиск отелей").put("find by city", null);
+            userMenu.get("Найти и забронировать номер").put("Выбрать отель из списка", null);
+            userMenu.get("Найти и забронировать номер").put("Найти отель по городу", null);
+            userMenu.get("Найти и забронировать номер").put("Найти отель по городу", null);
 
             userMenu.get("Редактировать персональные данные").put("Редактировать свои данные", null);
             userMenu.get("Редактировать персональные данные").put("Удалить свои данные", null);
@@ -212,38 +204,73 @@ public class TextInterface {
             case "Добавить отель":
                 addHotel();
                 break;
-
+            case "Показать отели":
+                hotelManager.getHotels().forEach(System.out::println);
+                break;
+            case "Изменить или отменить бронирование":
+                changeOrCanselBooking();
+                break;
         }
+    }
+
+    private void changeOrCanselBooking() {
+
     }
 
     private void addHotel() {
-        System.out.println("Введите название отеля");
-        String hotelName = scanner.next();
-        City city = addOrSelectCity();
-        hotelManager.createHotel(city.getId(),hotelName);
+        try{
+            System.out.println("Введите название отеля");
+            String hotelName = scanner.next();
+            City city = addOrSelectCity();
+            hotelManager.createHotel(city.getId(),hotelName);
+            int hotelId = hotelManager.findHotelByName(hotelName).getId();
+            byte choise;
+            do{
+                System.out.println("Введите цену на комнаты");
+                double price = scanner.nextDouble();
+                System.out.println("Введите количество людей  в комнате");
+                byte persons = scanner.nextByte();
+                System.out.println("Введите количество таких комнат");
+                int count = scanner.nextInt();
+                for (int i = 0; i < count; i++) {
+                    Hotel hotel = hotelManager.findHotelById(hotelId);
+                    hotel.addRoom(new Room(hotel.getMaxRoomId() + 1 , persons, new BigDecimal(price)));
+                }
+
+                System.out.println("Хотите ли добавить еще комнаты в этот отель? \n1. Да\n2. Нет  ");
+                choise = scanner.nextByte();
+            } while (choise == 1);
+        } catch (Exception e){
+            System.out.println(e);
+            System.out.println("Ошибка при создании отеля");
+        }
     }
 
-    private City addOrSelectCity() {
-        System.out.println("1. Выбрать город");
-        System.out.println("2. Добавить город");
-        String str = scanner.next();
-        if (str.equals("1")) {
+    private City addOrSelectCity() throws RuntimeException {
+        try{
             System.out.println("Cуществующие города");
             hotelManager.getCities().forEach(System.out::println);
-            System.out.println("Введите номер города");
-            int cityId = scanner.nextInt();
+            System.out.println("1. Выбрать город");
+            System.out.println("2. Добавить город");
+            String str = scanner.next();
+            if (str.equals("1")) {
+                System.out.println("Введите номер города");
+                int cityId = scanner.nextInt();
 
-            return hotelManager.getCities().stream().filter(c->c.getId() == cityId).findFirst().orElse(null);
-        } else if (str.equals("2")) {
-            System.out.println("Введите город отеля");
-            String cityName = scanner.next();
-            hotelManager.addCity(cityName);
+                return hotelManager.getCities().stream().filter(c->c.getId() == cityId).findFirst().orElse(null);
+            } else if (str.equals("2")) {
+                System.out.println("Введите город отеля");
+                String cityName = scanner.next();
+                hotelManager.addCity(cityName);
 
-            return hotelManager.getCities().stream().filter(c->c.getName().equals(cityName)).findFirst().orElse(null);
-        }
-        else {
-            System.out.println("Город не удалось создать или найти");
-            return null;
+                return hotelManager.getCities().stream().filter(c->c.getName().equals(cityName)).findFirst().orElse(null);
+            }
+            else {
+                System.out.println("Город не удалось создать или найти");
+                throw new RuntimeException("Ошибка при создании города");
+            }
+        }catch (Exception e){
+            throw e;
         }
     }
 
