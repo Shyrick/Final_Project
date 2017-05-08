@@ -1,5 +1,9 @@
 package Shyrick;
 
+import crazyjedi.Hotel;
+import crazyjedi.HotelManager;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -69,29 +73,29 @@ UserController userController = new UserController();
                 Scanner name = new Scanner(System.in);
                 boolean flag = false;
                 do {
-                    if(!(name.hasNext()) || !(name.nextLine instanceof String)) {
+                    if(!(name.hasNext()) || !(name.nextLine() instanceof String)) {
                         System.out.println("Некорректные данные! Попробуйте еще раз");
                     } else flag = true;
                 }while(! flag);
 
                 HotelManager hotelManager = new HotelManager();
-                System.out.println(hotelManager.getHotelsByName(name.nextLine()));
+//                System.out.println(hotelManager.getHotelsByName(name.nextLine()));
             }
             if (choise == 5) {
                 System.out.println("Введите название отеля");
                 Scanner name = new Scanner(System.in);
                 boolean flag = false;
                 do {
-                    if(!(name.hasNext()) || !(name.nextLine instanceof String)) {
+                    if(!(name.hasNext()) || !(name.nextLine() instanceof String)) {
                         System.out.println("Некорректные данные! Попробуйте еще раз");
                     } else flag = true;
                 }while(! flag);
 
                 HotelManager hotelManager = new HotelManager();
-                List<Hotel> result = hotelManager.getHotelsByCity(name.nextLine();
-                for (Hotel iterator : result) {
-                    System.out.println(iterator);
-                }
+//                List<Hotel> result = hotelManager.getHotelsByCity(name.nextLine());
+//                for (Hotel iterator : result) {
+//                    System.out.println(iterator);
+//                }
             }
             else System.out.println("Не верный выбор. Повторите ввод");
 
