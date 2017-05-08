@@ -492,13 +492,14 @@ public class TextInterface {
     }
 
     private void addAdmin() {
-        userController.registerUser();
-        userController.getTempUser().setAdmin(true);
+//        userController.registerUser();
+//        userController.getTempUser().setAdmin(true);
+        userController.registerAdmin();
     }
 
     private void addUser() {
         userController.registerUser();
-        userController.getTempUser().setAdmin(false);
+//        userController.getTempUser().setAdmin(false);
     }
 
     private void register() {
