@@ -223,6 +223,10 @@ public class TextInterface {
             }
             else {
                 System.out.println("Ваши бронирования:");
+                if (bookingManager.getByUser(userController.getTempUser()) == null ||bookingManager.getByUser(userController.getTempUser()).size() ==0){
+                    System.out.println("Нет ни одного бронирования");
+                    return;
+                }
                 bookingManager.getByUser(userController.getTempUser()).forEach(System.out::println);
                 System.out.println("Введите ID бронирования:");
                 int id = scanner.nextInt();
@@ -244,10 +248,17 @@ public class TextInterface {
                     if (dateBegin.compareTo(dateEnd) > 0) {throw new RuntimeException("Дата начала позже даты конца!");
                     }
 
+                    System.out.println("Комнаты доступные для бронирования:");
+                    hotelManager.findHotelById(booking.getRoom().getId()).getRooms().stream().filter(r->
+                            bookingManager.checkBookingPossible(dateBegin,dateEnd,r)).forEach(System.out::println);
+
+                    System.out.println("Введите ID комнаты");
+                    int roomId = scanner.nextInt();
+
                     bookingManager.removeBooking(booking);
                     booking.setDateBegin(dateBegin);
                     booking.setDateEnd(dateEnd);
-                    bookingManager.addBooking(dateBegin,dateEnd,userController.getTempUser(),booking.getHotel().getId(), booking.getRoom().getId());
+                    bookingManager.addBooking(dateBegin,dateEnd,userController.getTempUser(),booking.getHotel().getId(), roomId);
                     break;
                 case 2:
                     bookingManager.removeBooking(booking);
