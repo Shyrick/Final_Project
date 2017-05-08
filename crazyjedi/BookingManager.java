@@ -212,6 +212,10 @@ public class BookingManager {
         return userController;
     }
 
+    public List<Booking> getAllBookings() {
+        return bookingList;
+    }
+
     //GET USERS FROM BOOKINGS
 
 }

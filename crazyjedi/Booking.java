@@ -96,4 +96,12 @@ public class Booking {
                 ", hotel=" + hotel +
                 '}';
     }
+
+    public void setDateBegin(Date dateBegin) {
+        this.dateBegin = dateBegin;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
 }

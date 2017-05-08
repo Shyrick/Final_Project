@@ -78,15 +78,10 @@ public class TextInterface {
             //                         my bookings -> add, see, edit, cancel
             userMenu.put("Найти и забронировать номер", null);
             userMenu.put("Редактировать персональные данные", new HashMap<String, Map>());
-            userMenu.put("Действия со своими бронированиями", new HashMap<String, Map>());
+            userMenu.put("Действия со своими бронированиями", null);
 
             userMenu.get("Редактировать персональные данные").put("Редактировать свои данные", null);
             userMenu.get("Редактировать персональные данные").put("Удалить свои данные", null);
-
-            userMenu.get("Действия со своими бронированиями").put("add", null);
-            userMenu.get("Действия со своими бронированиями").put("see", null);
-            userMenu.get("Действия со своими бронированиями").put("edit", null);
-            userMenu.get("Действия со своими бронированиями").put("cancel", null);
         }
         catch (RuntimeException e) {
             System.out.println("Exception in menu initialization:" + e.toString());
@@ -206,20 +201,90 @@ public class TextInterface {
                 break;
             
             case "Изменить или отменить бронирование":
-                changeOrCanselBooking();
+                changeOrCanselBooking(true);    // делает админ
+                break;
+            case "Действия со своими бронированиями":
+                changeOrCanselBooking(false);    // делает пользователь
                 break;
             case "Найти и забронировать номер":
                 addBooking();
                 break;
-
         }
     }
 
     private void editOrRemoveHotel() {
     }
 
-    private void changeOrCanselBooking() {
+    private void changeOrCanselBooking(boolean isAdmin) throws RuntimeException {
+        try{
+            Booking booking = null;
+            if (isAdmin){
+                booking = selectBooking();
+            }
+            else {
+                System.out.println("Ваши бронирования:");
+                bookingManager.getByUser(userController.getTempUser()).forEach(System.out::println);
+                System.out.println("Введите ID бронирования:");
+                int id = scanner.nextInt();
+                booking = bookingManager.findById(id);
+            }
 
+            if(booking == null) {throw new RuntimeException("Не найдено ни одного бронирования");}
+
+            System.out.println("1. Изменить даты бронирования\n2. Отменить бронирование\n3. Назад");
+            byte choise = scanner.nextByte();
+
+            switch (choise){
+                case 1:
+                    System.out.println("Введите дату начала бронирования");
+                    Date dateBegin = getDate();
+                    System.out.println("Введите дату конца бронирования");
+                    Date dateEnd = getDate();
+
+                    if (dateBegin.compareTo(dateEnd) > 0) {throw new RuntimeException("Дата начала позже даты конца!");
+                    }
+
+                    bookingManager.removeBooking(booking);
+                    booking.setDateBegin(dateBegin);
+                    booking.setDateEnd(dateEnd);
+                    bookingManager.addBooking(dateBegin,dateEnd,userController.getTempUser(),booking.getHotel().getId(), booking.getRoom().getId());
+                    break;
+                case 2:
+                    bookingManager.removeBooking(booking);
+                    break;
+            }
+        }catch (RuntimeException e) {
+            System.out.println(e);
+            throw new RuntimeException("Ошибка при изменении или удалении бронирований");
+        }
+    }
+
+    private Booking selectBooking() throws RuntimeException {
+        System.out.println("1. Выбрать из полного списка ID нужного бронирования" +
+                "\n2. Выбрать среди бронирований пользователя\n" +
+                "3. Выход");
+        try{
+            byte choise = scanner.nextByte();
+            int id;
+            switch (choise) {
+                case 1:
+                    bookingManager.getAllBookings().forEach(System.out::println);
+                    System.out.println("Введите ID бронирования:");
+                    id = scanner.nextInt();
+                    return bookingManager.findById(id);
+                case 2:
+                    findUser();
+                    bookingManager.getByUser(userController.getTempUser()).forEach(System.out::println);
+                    System.out.println("Введите ID бронирования:");
+                    id = scanner.nextInt();
+                    return bookingManager.findById(id);
+                default:
+                    throw new RuntimeException("Выбор бронирования отменен.");
+            }
+        }catch (RuntimeException e) {
+            System.out.println(e);
+            throw new RuntimeException("Ошибка выбора бронирования");
+        }
     }
 
     private void addHotel() {
@@ -449,19 +514,6 @@ public class TextInterface {
 
     private String getName() {
         return scanner.next();
-    }
-
-    private String getCity() {
-        System.out.println("City:");
-        return scanner.next();
-    }
-
-    private int getDuration() throws RuntimeException {
-        System.out.println("Продолжительность (дней):");
-        try{return scanner.nextInt();}
-        catch (RuntimeException e){
-            throw new RuntimeException("Ошибка ввода продолжительности");
-        }
     }
 
     private int getDay() throws RuntimeException  {
