@@ -89,6 +89,7 @@ public class BookingManager {
 
     public List<Booking> getByRoom(Room room){
         if(hotelManager.getHotels().stream().anyMatch(hotel -> hotel.getRooms().contains(room))){
+            if (bookingList == null || bookingList.size() == 0) return null;
             return bookingList.stream().filter(booking -> booking.getRoom().equals(room)).collect(Collectors.toList());
         }
         else return null;
@@ -108,6 +109,7 @@ public class BookingManager {
         Room tempRoom = hotelManager.findRoomById(roomId);
         if(tempHotel!=null&&tempRoom!=null){
             Booking tempBooking = new Booking(id,user,dateBegin,dateEnd,tempHotel,tempRoom);
+            if (bookingList == null) {bookingList = new ArrayList<>();}
             this.bookingList.add(tempBooking);
         }else {
             throw new IllegalArgumentException("No room or hotel found!");
@@ -171,7 +173,7 @@ public class BookingManager {
     public  boolean checkBookingPossible(Date dateBegin, Date dateEnd, Room room){
         //Если дата начала и дата конца не попадают ни в один из существующих промежутков бронирования, вернуть true
         List<Booking> bookingsOfRoom = this.getByRoom(room);
-        if(bookingsOfRoom==null) return false;
+        if(bookingsOfRoom==null) return true;
         for (Booking booking:bookingsOfRoom) {
             if(booking.getDateBegin().compareTo(dateBegin)>=0&&booking.getDateBegin().compareTo(dateEnd)<=0){
                 return false;

@@ -32,6 +32,7 @@ public class Booking {
         this.dateBegin = dateBegin;
         this.dateEnd = dateEnd;
         this.hotel = hotel;
+        this.room = room;
     }
 
     public long getId() {
