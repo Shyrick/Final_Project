@@ -5,6 +5,7 @@ import crazyjedi.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class TextInterface {
@@ -217,11 +218,10 @@ public class TextInterface {
 
     private void changeOrCanselBooking(boolean isAdmin) throws RuntimeException {
         try{
-            Booking booking = null;
+            Booking booking;
             if (isAdmin){
                 booking = selectBooking();
-            }
-            else {
+            } else {
                 System.out.println("Ваши бронирования:");
                 if (bookingManager.getByUser(userController.getTempUser()) == null ||bookingManager.getByUser(userController.getTempUser()).size() ==0){
                     System.out.println("Нет ни одного бронирования");
@@ -248,25 +248,32 @@ public class TextInterface {
                     if (dateBegin.compareTo(dateEnd) > 0) {throw new RuntimeException("Дата начала позже даты конца!");
                     }
 
-                    System.out.println("Комнаты доступные для бронирования:");
-                    hotelManager.findHotelById(booking.getRoom().getId()).getRooms().stream().filter(r->
-                            bookingManager.checkBookingPossible(dateBegin,dateEnd,r)).forEach(System.out::println);
-
-                    System.out.println("Введите ID комнаты");
-                    int roomId = scanner.nextInt();
-
                     bookingManager.removeBooking(booking);
-                    booking.setDateBegin(dateBegin);
-                    booking.setDateEnd(dateEnd);
-                    bookingManager.addBooking(dateBegin,dateEnd,userController.getTempUser(),booking.getHotel().getId(), roomId);
+                    List<Room> listRoom = booking.getHotel().getRooms().stream().filter(r->
+                            bookingManager.checkBookingPossible(dateBegin,dateEnd,r)).collect(Collectors.toList());
+                    if (listRoom == null || listRoom.size() == 0) {
+                        System.out.println("Нет доступных комнат на этот период");
+                        bookingManager.addBooking(booking.getDateBegin(),booking.getDateEnd(),booking.getUser(),booking.getHotel().getId(), booking.getRoom().getId());
+                        return;
+                    } else {
+                        System.out.println("Комнаты доступные для бронирования:");
+                        listRoom.stream().forEach(System.out::println);
+                        System.out.println("\nВведите ID комнаты");
+                        int roomId = scanner.nextInt();
+                        booking.setDateBegin(dateBegin);
+                        booking.setDateEnd(dateEnd);
+                        bookingManager.addBooking(dateBegin,dateEnd,booking.getUser(),booking.getHotel().getId(), roomId);
+                        System.out.println("Даты бронирования успешно изменены. Данные измененного бронирования:" +
+                                "\n" + booking);
+                    }
                     break;
                 case 2:
                     bookingManager.removeBooking(booking);
+                    System.out.println("Бронирование\n" + booking + "\nупешно отменено.");
                     break;
             }
-        }catch (RuntimeException e) {
+        }catch (Exception e){
             System.out.println(e);
-            throw new RuntimeException("Ошибка при изменении или удалении бронирований");
         }
     }
 
@@ -492,6 +499,7 @@ public class TextInterface {
     private void findUserById() {
         System.out.println("Введите ID пользователя");
         editedUser = userController.findById(getId());
+        userController.setTempUser(editedUser);
         System.out.println(editedUser);
     }
 
@@ -499,6 +507,7 @@ public class TextInterface {
         System.out.println("Введите логин пользователя");
         String str = getName();
         editedUser = userController.findByLogin(str);
+        userController.setTempUser(editedUser);
         System.out.println(editedUser);
     }
 
@@ -524,8 +533,17 @@ public class TextInterface {
         catch (RuntimeException e){throw new RuntimeException("ошибка ввода ID");}
     }
 
-    private String getName() {
-        return scanner.next();
+    private String getName() throws RuntimeException {
+        String name;
+        try{name = scanner.nextLine();
+            if(name == null || name.length() == 0) {
+                throw new RuntimeException("Некорректное имя");
+            }
+        } catch (RuntimeException e){
+            System.out.println(e);
+            throw new RuntimeException("Ошибка ввода имени");
+        }
+        return name;
     }
 
     private int getDay() throws RuntimeException  {
@@ -544,7 +562,7 @@ public class TextInterface {
     private int getMonth() throws RuntimeException  {
         System.out.println("Месяц:");
         try{
-            int m = scanner.nextInt();
+            int m = scanner.nextInt() - 1;
             if (m < 1 || m > 12 ) {throw new RuntimeException("Неправильный месяц");}
             return m;
         }
