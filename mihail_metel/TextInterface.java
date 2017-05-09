@@ -8,6 +8,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * Класс текстового интерфейса, который содержит в себе контроллер бронирований, содержащий в свою очередь контроллеры пользователей и отелей.
+ *
+ * Обеспечивает все действия по добавлению, удалению, редактированию бронирований, отелей, пользователей.
+ */
 public class TextInterface {
 
     private Scanner scanner = new Scanner(System.in);
@@ -28,6 +33,11 @@ public class TextInterface {
 
     private Shyrick.User you = null;
 
+
+    /**
+     * Метод создает единственный экземпляр текстового интерфейса в программе.
+     * @param bookingManager принимает на входе контроллер бронирований.
+     */
     public static void create(BookingManager bookingManager) {
         interFace = new TextInterface(bookingManager);
         System.out.println("Добро пожаловать в программу управления бронированиями группы 10 GoJava#6." +
@@ -35,6 +45,10 @@ public class TextInterface {
                 "Приятного использования!\n");
     }
 
+    /**
+     * Конструктор ткстового интерфейса,
+     * @param bookingManager принимает на входе контроллер бронирований.
+     */
     private TextInterface(BookingManager bookingManager) {
         this.bookingManager = bookingManager;
         this.userController = bookingManager.getUserController();
@@ -92,6 +106,10 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод осуществляет доступ к единственному экземпляру класса интерфейса.
+     * @return
+     */
     public static TextInterface getInterFace() {
         return interFace;
     }
@@ -217,6 +235,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Удаление персональных данных из системы.
+     */
     private void deleteMy() {
         System.out.println("Удалить также ваши бронирования? \n1. Да\n2. Нет, отменить удаление данных");
         try{
@@ -233,6 +254,9 @@ public class TextInterface {
 
     }
 
+    /**
+     * Метод для изменения или редактирования отелей. Запускается из меню адвинистратора.
+     */
     private void editOrRemoveHotel() {
         try{
             Hotel hotel = selectHotel();
@@ -330,6 +354,11 @@ public class TextInterface {
 
     }
 
+    /**
+     * Метод для выбора отеля из имеющихся в системе.
+     * @return возвращает отель, выбранный пользователем.
+     * @throws RuntimeException бросает эксепшн в случае ошибки ввода данных или выбора несуществующего отеля.
+     */
     private Hotel selectHotel() throws RuntimeException {
         System.out.println("Выберите отель из списка ниже:");
         try{
@@ -344,6 +373,12 @@ public class TextInterface {
 
     }
 
+    /**
+     * Метод для изменения или отмены бронирования.
+     * @param isAdmin в случае запуска от имени администратора, флаг равен тру, фолс - в противном случае. Администратор сможет выбрать пользователя из сиска,
+     *                пользователь сможет работать только со своими бронированиями.
+     * @throws RuntimeException в случае ошибки ввода или выбора несуществующего бронирования бросается эксепшн.
+     */
     private void changeOrCanselBooking(boolean isAdmin) throws RuntimeException {
         try{
             Booking booking;
@@ -412,6 +447,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод выбора пользователем отеля из списка.
+     * @return возвращает выбранный пользователем отель.
+     * @throws RuntimeException в случае ошибки ввода или выбора несуществующего отеля бросается эксепшн.
+     */
     private Booking selectBooking() throws RuntimeException {
         System.out.println("1. Выбрать из полного списка ID нужного бронирования" +
                 "\n2. Выбрать среди бронирований пользователя\n" +
@@ -440,6 +480,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод для добавления отеля в систему. Есть возможность добавлять разное количество комнат с разными ценами и количеством персон.
+     */
     private void addHotel() {
         try{
             System.out.println("Введите название отеля");
@@ -470,6 +513,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод выбора города из имеющихся в системе, или добавления города в случае, если город отсутствует.
+     * @return возвращает выбранный или созданный город.
+     * @throws RuntimeException в случае ошибки ввода или выбора несуществующего города бросается эксепшн.
+     */
     private City addOrSelectCity() throws RuntimeException {
         try{
             System.out.println("Cуществующие города");
@@ -499,6 +547,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод добавления бронирования. От пользователя требуется ввести город, отель в городе, даты начала и конца посещения.
+     */
     private void addBooking() {
         City city;
 
@@ -545,6 +596,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод для запроса даты у пользователя.
+     * @return
+     * @throws RuntimeException в случа ошибки ввода бросается эксепшн.
+     */
     private Date getDate() throws RuntimeException {
         Date date;
         try{
@@ -556,6 +612,9 @@ public class TextInterface {
         return date;
     }
 
+    /**
+     * Удаление пользователя администратором по ID пользователя
+     */
     private void removeUserById() {
         findUserById();
         if (editedUser!= null) {
@@ -568,6 +627,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Удаление пользователя администратором по логину пользователя
+     */
     private void removeUserByLogin() {
         findUserByLogin();
         if (editedUser!= null) {
@@ -580,6 +642,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Редактировани имени и фамилии пользователя с поиском пользователя по ID
+     */
     private void editUserById() {
         findUserById();
         if (editedUser!= null) {
@@ -591,6 +656,9 @@ public class TextInterface {
         }
     }
 
+    /**
+     *  Редактировани имени и фамилии пользователя с поиском пользователя по логину
+     */
     private void editUserByLogin() {
         findUserByLogin();
         if (editedUser!= null) {
@@ -602,6 +670,10 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод для входа пользователя в систему. Пользователю предлагается ввести уникальный логин. В случае если человек
+     * с таким логином имеет права администратора, вызывается меню администратора, в противном случае - меню клиента.
+     */
     private void login() {
         System.out.println("Введите логин");
         try{
@@ -628,6 +700,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод выбора пользователя администратором. Выбранный пользователь сохраняется в перменной TempUser контроллера пользователей,
+     * а также в переменной editedUser интерфейса.
+     * @throws RuntimeException в случае ошибок ввода бросается эксепшн.
+     */
     private void findUser() throws RuntimeException {
         System.out.println("Найти пользователя\n1. По ID\n2. По логину");
 
@@ -643,6 +720,10 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Метод для поиска пользователя по ID. Выбранный пользователь сохраняется в перменной TempUser контроллера пользователей,
+     * а также в переменной editedUser интерфейса.
+     */
     private void findUserById() {
         System.out.println("Введите ID пользователя");
         editedUser = userController.findById(getId());
@@ -650,6 +731,10 @@ public class TextInterface {
         System.out.println(editedUser);
     }
 
+    /**
+     * Метод для поиска пользователя по логину. Выбранный пользователь сохраняется в перменной TempUser контроллера пользователей,
+     * а также в переменной editedUser интерфейса.
+     */
     private void findUserByLogin() {
         System.out.println("Введите логин пользователя");
         String str = getName();
@@ -658,28 +743,46 @@ public class TextInterface {
         System.out.println(editedUser);
     }
 
+    /**
+     * Метод для регистрации пользователя с правами администратора.
+     */
     private void addAdmin() {
-//        userController.registerUser();
-//        userController.getTempUser().setAdmin(true);
         userController.registerAdmin();
     }
 
+    /**
+     * Метод для регистрации пользователя с правами клиента.
+     */
     private void addUser() {
         userController.registerUser();
 //        userController.getTempUser().setAdmin(false);
     }
 
+    /**
+     * Метод для осуществления регистрации пользователя в системе.
+     */
     private void register() {
         userController.registerUser();
     }
 
 
     // Methods for data input
+
+    /**
+     * Ввод численного значения ID пользователя или отеля или бронирования.
+     * @return возвращает численное значение ID
+     * @throws RuntimeException в случае ошибки ввода или ввода строки бросается эксепшн.
+     */
     private int getId() throws RuntimeException {
         try{return scanner.nextInt();}
         catch (RuntimeException e){throw new RuntimeException("ошибка ввода ID");}
     }
 
+    /**
+     * Ввод имени пользователя или отеля.
+     * @return возвращает запрошенное у пользователя имя.
+     * @throws RuntimeException в случае ошибок ввода бросается эксепшн.
+     */
     private String getName() throws RuntimeException {
         String name;
         try{name = scanner.next();
@@ -693,6 +796,11 @@ public class TextInterface {
         return name;
     }
 
+    /**
+     * Запрос дня месяца у пользователя.
+     * @return возвращает день (числовое значение)
+     * @throws RuntimeException в случае ошибки ввода или ввода строки бросается эксепшн.
+     */
     private int getDay() throws RuntimeException  {
         System.out.println("День: ");
         try{
@@ -706,6 +814,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Запрос месяца у пользователя.
+     * @return возвращает месяц (числовое значение)
+     * @throws RuntimeException в случае ошибки ввода или ввода строки бросается эксепшн.
+     */
     private int getMonth() throws RuntimeException  {
         System.out.println("Месяц:");
         try{
@@ -719,6 +832,11 @@ public class TextInterface {
         }
     }
 
+    /**
+     * Запрос года у пользователя.
+     * @return возвращает год (числовое значение)
+     * @throws RuntimeException в случае ошибки ввода или ввода строки бросается эксепшн.
+     */
     private int getYear() throws RuntimeException {
         int maxYear = 2020;
         int minyear = 2017;

@@ -6,8 +6,17 @@ import crazyjedi.HotelManager;
 import mihail_metel.TextInterface;
 
 
+/**
+ * Главный класс всей системы, в котором в методе Main инициализируются объекты интерфейса и контроллеров пользователей,
+ * бронирований и отелей и запускается текстовый интерфейс программы.
+ */
 public class HotelManagementSystem {
 
+    /**
+     * Главный метод всей системы, в котором инициализируются объекты интерфейса и контроллеров пользователей,
+     * бронирований и отелей и запускается текстовый интерфейс программы.
+     * @param args
+     */
     public static void main(String[] args) {
         UserController userController = new UserController();
         HotelManager hotelManager = new HotelManager();
