@@ -75,12 +75,25 @@ public class Hotel {
 
     @Override
     public String toString() {
-        return "Hotel{" +
-                "id=" + id +
-                ", cityId=" + city +
-                ", name='" + name + '\'' +
-                ", rooms=" + rooms +
-                '}';
+        StringBuffer sb = new StringBuffer("");
+        sb.append("Hotel #");
+        sb.append(id);
+        sb.append(", City ");
+        sb.append(city);
+        sb.append(", Name'");
+        sb.append(name);
+        sb.append("\n");
+        sb.append("ROOMS:\n");
+        for (int i = 0; i < rooms.size(); i++) {
+            Room room = rooms.get(i);
+            sb.append("\t" + room);
+            if(i%2==0){
+                sb.append("\t");
+            } else{
+                sb.append("\n");
+            }
+        }
+        return  sb.toString();
     }
 
     @Override

@@ -90,6 +90,7 @@ public class BookingManager {
     }
 
     public List<Booking> getByUser(User user){
+
         return bookingList.stream().filter(booking -> booking.getUser().equals(user)).collect(Collectors.toList());
     }
 
@@ -165,7 +166,6 @@ public class BookingManager {
     }
 
     //REMOVING BOOKING
-    //todo реализовать со списком
     public void removeBooking(Booking booking){
         bookingList.remove(booking);
         dumpBookings();
