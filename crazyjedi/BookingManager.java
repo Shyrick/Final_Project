@@ -28,8 +28,11 @@ public class BookingManager {
     //READING AND WRITING BOOKING LIST
 
 
-    //todo Implement methods in BookingReader
     public void loadBookings(){
+        /**
+         * Loads bookings from a DB. After reading info about bookings, uses HotelManager and UserController to get Hotel,
+         * Room and User instances by id.
+         */
         List<List<String>> blueprints = dbm.readBookingDB();
         List<Booking> bookingsRead = new ArrayList<>();
         for (List<String> blueprint : blueprints) {
@@ -64,13 +67,20 @@ public class BookingManager {
     }
 
     public void dumpBookings(){
+        /**
+         * Dumns buukings to DB.
+         */
         dbm.dumpBookingsDB(this.bookingList);
     }
 
     //FIND BOOKING
 
     public Booking findById(long id){
-
+        /**
+         * Looks for a booking by id.
+         * @param   id   id of searched booking.
+         * @return  booking booking with certain id.
+         */
         for (Booking currentBooking : bookingList) {
             if (currentBooking.getId() == id) {
                 return currentBooking;
