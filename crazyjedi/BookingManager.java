@@ -68,7 +68,7 @@ public class BookingManager {
 
     public void dumpBookings(){
         /**
-         * Dumns buukings to DB.
+         * Dumps bookings to DB.
          */
         dbm.dumpBookingsDB(this.bookingList);
     }
@@ -79,7 +79,7 @@ public class BookingManager {
         /**
          * Looks for a booking by id.
          * @param   id   id of searched booking.
-         * @return  booking booking with certain id.
+         * @return       booking with certain id.
          */
         for (Booking currentBooking : bookingList) {
             if (currentBooking.getId() == id) {
@@ -90,15 +90,29 @@ public class BookingManager {
     }
 
     public List<Booking> getByUser(User user){
-
+        /**
+         * Looks for bookings belonging to a certain user.
+         * @param   user    user to search bookings.
+         * @return          a list of user's bookings.
+         */
         return bookingList.stream().filter(booking -> booking.getUser().equals(user)).collect(Collectors.toList());
     }
 
     public List<Booking> getByUserId(int userId){
+        /**
+         * Looks for bookings belonging to a certain user.
+         * @param   id  user's id.
+         * @return      a list of user's bookings.
+         */
         return bookingList.stream().filter(booking -> booking.getUser().getId()==userId).collect(Collectors.toList());
     }
 
     public List<Booking> getByRoom(Room room){
+        /**
+         * Looks for bookings belonging to a certain room.
+         * @param   room    room to search bookings.
+         * @return          a list of bookings.
+         */
         if(hotelManager.getHotels().stream().anyMatch(hotel -> hotel.getRooms().contains(room))){
             if (bookingList == null || bookingList.size() == 0) return null;
             return bookingList.stream().filter(booking -> booking.getRoom().equals(room)).collect(Collectors.toList());
@@ -107,6 +121,10 @@ public class BookingManager {
     }
 
     public List<Booking> getByRoomId(int roomId){
+        /**
+         * Looks for bookings belonging to a certain room.
+         * @param   roomId   id of a room to search bookings.
+         */
         Room room = hotelManager.findRoomById(roomId);
         if(room==null) return null;
         return bookingList.stream().filter(booking -> booking.getRoom().getId()==roomId).collect(Collectors.toList());
@@ -115,6 +133,14 @@ public class BookingManager {
     //ADDING NEW BOOKING
 
     public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, int roomId) throws IllegalArgumentException{
+        /**
+         * Adds bboking to a bookings list and writes it to a DB.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   user        user who will live in the room.
+         * @param   hotelId     id of a hotel.
+         * @param   roomId      id of a room.
+         */
         long id = bookingMaxId.getAndIncrement();
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         Room tempRoom = hotelManager.findRoomById(roomId);
@@ -129,6 +155,14 @@ public class BookingManager {
     }
 
     public void addBooking(Date dateBegin, Date dateEnd, int userId, int hotelId, int roomId) throws IllegalArgumentException{
+        /**
+         * Adds bboking to a bookings list and writes it to a DB.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   userId      id of a user to live in the room.
+         * @param   hotelId     id of a hotel.
+         * @param   roomId      id of a room.
+         */
         long id = bookingMaxId.getAndIncrement();
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         Room tempRoom = hotelManager.findRoomById(roomId);
@@ -143,6 +177,14 @@ public class BookingManager {
     }
 
     public void addBooking(Date dateBegin, Date dateEnd, User user, int hotelId, Room room) throws IllegalArgumentException{
+        /**
+         * Adds bboking to a bookings list and writes it to a DB.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   user        user who will live in the room.
+         * @param   hotelId     id of a hotel.
+         * @param   room        room object.
+         */
         long id = bookingMaxId.getAndIncrement();
         Hotel tempHotel = hotelManager.findHotelById(hotelId);
         if(tempHotel!=null&&tempHotel.getRooms().contains(room)){
@@ -155,6 +197,14 @@ public class BookingManager {
     }
 
     public void addBooking(Date dateBegin, Date dateEnd, User user, Hotel hotel, Room room) throws IllegalArgumentException{
+        /**
+         * Adds bboking to a bookings list and writes it to a DB.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   user        user who will live in the room.
+         * @param   hotel       hotel object.
+         * @param   room        room object.
+         */
         long id = bookingMaxId.getAndIncrement();
         if(hotelManager.getHotels().contains(hotel)&&hotel.getRooms().contains(room)){
             Booking tempBooking = new Booking(id,user,dateBegin,dateEnd,hotel,room);
@@ -167,11 +217,19 @@ public class BookingManager {
 
     //REMOVING BOOKING
     public void removeBooking(Booking booking){
+        /**
+         * removes booking from a bookings list and DB.
+         * @param   booking booking object to be removed.
+         */
         bookingList.remove(booking);
         dumpBookings();
     }
 
     public void removeBooking(List<Booking> bookings){
+        /**
+         * removes booking from a bookings list and DB.
+         * @param   bookings    a list of booking objects to be removed.
+         */
         for (Booking booking : bookings) {
             bookingList.remove(booking);
         }
@@ -181,6 +239,14 @@ public class BookingManager {
     //CHECK IF BOOKING IS POSSIBLE
 
     public  boolean checkBookingPossible(Date dateBegin, Date dateEnd, Room room){
+        /**
+         * Checks if booking is possible. Returns false if some existing booking period of a room intersects
+         * with desired booking period or starting date > ending date.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   room        room object.
+         * @return              boolean, true if booking is available.
+         */
         //Если дата начала и дата конца не попадают ни в один из существующих промежутков бронирования, вернуть true
         List<Booking> bookingsOfRoom = this.getByRoom(room);
         if(bookingsOfRoom==null) return true;
@@ -200,6 +266,13 @@ public class BookingManager {
     }
 
     public  boolean checkBookingPossible(Date dateBegin, Date dateEnd, int roomId){
+        /** Checks if booking is possible. Returns false if some existing booking period of a room intersects
+         * with desired booking period or starting date > ending date.
+         * @param   dateBegin   starting date.
+         * @param   dateEnd     ending date.
+         * @param   roomId      id of a room object.
+         * @return              boolean, true if booking is available.
+         */
         //Если дата начала и дата конца не попадают ни в один из существующих промежутков бронирования, вернуть true
         List<Booking> bookingsOfRoom = this.getByRoomId(roomId);
         if(bookingsOfRoom==null) return false;

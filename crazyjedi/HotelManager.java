@@ -62,6 +62,10 @@ public class HotelManager {
 
 
     public void addCity(City city){
+        /**
+         * Adds a city to a cities list.
+         * @param   city    city to add.
+         */
         if(!cities.contains(city)){
             cities.add(city);
         }
@@ -69,6 +73,10 @@ public class HotelManager {
     }
 
     public void addCity(String cityName) throws IllegalArgumentException{
+        /**
+         * adds a city to the cities list.
+         * @param   cityName    a name of a city.
+         */
         if(cityName.isEmpty()||cityName.matches("[\\W\\d]")){
            throw new IllegalArgumentException("Insert legal city Name!");
         }
@@ -81,6 +89,11 @@ public class HotelManager {
 
 
     private void addCity(int id, String name){
+        /**
+         * Adds a city to the cities list.
+         * @param   id      city id.
+         * @param   name    city name.
+         */
         if(!cities.stream().allMatch(city -> city.getId()==id)){
             cities.add(new City(id,name));
         }
@@ -88,6 +101,10 @@ public class HotelManager {
     }
 
     public void removeCity(City city){
+        /**
+         * Removes a city from the cities list.
+         * @param   city    city to be removed.
+         */
         Iterator<City> iter = cities.iterator();
         while(iter.hasNext()){
             City curCity = iter.next();
@@ -112,19 +129,21 @@ public class HotelManager {
     }
 
     public void removeHotel(int id){
-        Iterator<Hotel> iter = hotels.iterator();
-        while(iter.hasNext()){
-            Hotel curHotel = iter.next();
-            if(curHotel.getId()==id){
-                iter.remove();
-            }
-        }
+        /**
+         * Removes a hotel from the hotels list.
+         * @param   id  id of a hotel to be removed.
+         */
+        hotels.removeIf(curHotel -> curHotel.getId() == id);
         dbm.dumpRoomDB(this.getRooms());
         dbm.dumpHotelDB(this.getHotels());
     }
 
     //Deleting hotels
     public void removeHotel(Hotel hotelToRemove){
+        /**
+         * Removes a hotel from the hotels list.
+         * @param   hotelToRemove  a hotel to be removed.
+         */
         this.setHotels(this.hotels.stream()
                 .filter(hotel -> hotel.getId()==hotelToRemove.getId())
                 .collect(Collectors.toList()));
@@ -133,6 +152,12 @@ public class HotelManager {
     }
 
     public void updateHotel (int id, Hotel hotel) throws IllegalArgumentException{
+        /**
+         * Updates a hotel. In fact, drops a hotel and inserts a new one with the same id.
+         * Don't forget to reassign rooms and write then read bookings from DB to set actual values.
+         * @param   id      id of a hotel to be updated.
+         * @param   hotel   a hotel object to be inserted with id.
+         */
         //Обновляя отель, не забудьте обновить Bookings. Просто запишите и прочитайте их из базы и в бонирования
         // подтянутся новые данные.
         removeHotel(id);
@@ -149,7 +174,11 @@ public class HotelManager {
     }
 
     public Room findRoomById(int roomId){
-
+        /**
+         * Looks for a room by id.
+         * @param   roomId  room id.
+         * @return          room object.
+         */
         for (Hotel hotel : hotels) {
             for (Room room : hotel.getRooms()) {
                 if(room.getId()==roomId){
@@ -161,6 +190,11 @@ public class HotelManager {
     }
 
     public Hotel findHotelById(int hotelId) {
+        /**
+         * Looks for a hotel by id.
+         * @param   hotelId  hotel id.
+         * @return           hotel object.
+         */
         for (Hotel hotel : hotels) {
             if(hotel.getId()==hotelId){
                 return hotel;
@@ -170,12 +204,22 @@ public class HotelManager {
     }
 
     public List<Hotel> getHotelsByCity(int cityId) {
+        /**
+         * Looks for hotels by city.
+         * @param   cityId  city id.
+         * @return          list of hotel objects.
+         */
         String currCity = this.cities.stream().filter(city -> city.getId()==cityId).findFirst().orElse(null).getName();
         return hotels.stream().filter(hotel -> hotel.getCity().equals(currCity)).collect(Collectors.toList());
     }
 
     //Creating hotels
     public void createHotel(int cityId, String name) throws IllegalArgumentException{
+        /**
+         * Creates a new hotel object. You should use this function to create hotels.
+         * @param   cityId  city id.
+         * @param   name    hotel name
+         */
         String currCity;
         try {
             currCity  = this.cities.stream().filter(city -> city.getId() == cityId).findFirst().orElse(null).getName();
@@ -190,6 +234,13 @@ public class HotelManager {
     }
 
     public void createHotel(int hotelId, int cityId, String name) throws IllegalArgumentException{
+        /**
+         * Creates a new hotel object.
+         * You should not use this function to create hotels unless you know what you are doing.
+         * @param   hotelId the hotel's id.
+         * @param   cityId  city id.
+         * @param   name    hotel name
+         */
         String currCity = null;
         try {
             currCity = this.cities.stream().filter(city -> city.getId()==cityId).findFirst().orElse(null).getName();
@@ -206,12 +257,24 @@ public class HotelManager {
     }
     //Creating rooms
     public void createRoom(Hotel hotel, byte person, BigDecimal price){
+        /**
+         * Creates a new room. You should use this function to create rooms.
+         * @param   hotel   hotel where the room will be placed.
+         * @param   preson  room catacity.
+         * @param   price   room price per day.
+         */
         hotel.addRoom(new Room(this.roomMaxId.getAndIncrement(),person,price));
         dbm.dumpRoomDB(this.getRooms());
         dbm.dumpHotelDB(this.getHotels());
     }
 
     public void createRoom(int hotelId, byte person, BigDecimal price) throws IllegalArgumentException{
+        /**
+         * Creates a new room. You should use this function to create rooms.
+         * @param   hotelId id of a hotel where the room will be placed.
+         * @param   preson  room catacity.
+         * @param   price   room price per day.
+         */
         Hotel resHotel=this.hotels.stream().filter(hotel -> hotel.getId()==hotelId).findFirst().orElse(null);
         if(resHotel!=null){
             resHotel.addRoom(new Room(this.roomMaxId.getAndIncrement(),person,price));
@@ -224,6 +287,13 @@ public class HotelManager {
     }
 
     public void createRoom(Hotel hotel, int roomId, byte person, BigDecimal price) throws IllegalArgumentException{
+        /**
+         * Creates a new room. You should not use this function to create rooms unless you know what you are doing.
+         * @param   hotel   hotel where the room will be placed
+         * @param   roomId  id of the room.
+         * @param   preson  room catacity.
+         * @param   price   room price per day.
+         */
         if(!this.hotels.contains(hotel)) throw new IllegalArgumentException("No such Hotel found!");
         hotel.addRoom(new Room(roomId,person,price));
         if(roomId>=this.roomMaxId.get()){
@@ -234,6 +304,13 @@ public class HotelManager {
     }
 
     public void createRoom(int hotelId, int roomId, byte person, BigDecimal price) throws IllegalArgumentException{
+        /**
+         * Creates a new room. You should not use this function to create rooms unless you know what you are doing.
+         * @param   hotelId id of a hotel where the room will be placed.
+         * @param   roomId  id of the room.
+         * @param   preson  room catacity.
+         * @param   price   room price per day.
+         */
         Hotel resHotel=this.hotels.stream().filter(hotel -> hotel.getId()==hotelId).findFirst().orElse(null);
         if(resHotel!=null){
             resHotel.addRoom(new Room(roomId,person,price));
@@ -256,11 +333,19 @@ public class HotelManager {
     }
 
     public Hotel getLastAddedHotel(){
+        /**
+         * Gets the last created hotel.
+         * @return          last created hotel
+         */
         if(getHotels().isEmpty()) return null;
         return getHotels().get(getHotels().size()-1);
     }
 
     public Hotel findHotelByName(String hotelName) {
+        /**
+         * Gets a hotel by name.
+         * @return          hotel
+         */
         return hotels.stream().filter(h->h.getName().equals(hotelName)).findFirst().orElse(null);
     }
 }

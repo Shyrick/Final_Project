@@ -119,6 +119,10 @@ public class Hotel {
     }
 
     public int getMaxRoomId() {
+        /**
+         *  Gets the largest room id from the hotel's rooms list.
+         *  @return largest id.
+         */
         int maxId = 0;
         if (rooms != null || rooms.size()!=0) return 0;
 
