@@ -207,8 +207,8 @@ public class TextInterface {
                 break;
             case "Удалить свои данные":
                 deleteMy();
-                throw new RuntimeException("Такого пользователя больше нет.");
-                //break;
+                //throw new RuntimeException("Такого пользователя больше нет.");
+                break;
             case "Сделать бронирование на пользователя":
                 findUser();
                 addBooking();
@@ -238,13 +238,14 @@ public class TextInterface {
     /**
      * Удаление персональных данных из системы.
      */
-    private void deleteMy() {
+    private void deleteMy() throws RuntimeException {
         System.out.println("Удалить также ваши бронирования? \n1. Да\n2. Нет, отменить удаление данных");
         try{
             int c = scanner.nextInt();
             if (c == 1) {
                 bookingManager.removeBooking(bookingManager.getAllBookings().stream().filter(b->b.getUser().equals(editedUser)).collect(Collectors.toList()));
                 userController.deleteUser();
+                throw new RuntimeException("Такого пользователя больше нет");
             } else {
                 System.out.println("Удаление данных отменено.");
             }
