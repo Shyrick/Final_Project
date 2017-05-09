@@ -40,9 +40,9 @@ public class TextInterface {
      */
     public static void create(BookingManager bookingManager) {
         interFace = new TextInterface(bookingManager);
-        System.out.println("Добро пожаловать в программу управления бронированиями группы 10 GoJava#6." +
-                "Для выбора пунктов меню вводите соответствующий номер команды или ее полный текст." +
-                "Приятного использования!\n");
+        System.out.println("Добро пожаловать в программу управления бронированиями группы 10 GoJava#6.\n" +
+                "Для выбора пунктов меню вводите соответствующий номер команды или ее полный текст.\n" +
+                "Приятного пользования!\n");
     }
 
     /**

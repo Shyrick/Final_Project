@@ -1,5 +1,3 @@
-package Final_Project.Users;
-
 import Shyrick.UserController;
 import crazyjedi.BookingManager;
 import crazyjedi.HotelManager;

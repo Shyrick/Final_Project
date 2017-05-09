@@ -9,19 +9,41 @@ public class UserController {
 
     public User tempUser;
 
-
+    /**
+     * Метод создает пользователя принимая параметры:
+     * @param login логин пользователя
+     * @param  firstName  имя пользователя
+     * @param lastName  фамилия поьлзователея
+     * В конструктор передается уникальныый id пользователя и значение поля isAdmin = false
+     *@return новый пользователь
+     */
     private  User createUser(String login, String firstName, String lastName){
-
-         id = daoUser.getUserFromList(daoUser.getUserListSize()-1).getId() + 1;
+        if (daoUser.getUserListSize() != 0) {
+            id = daoUser.getUserFromList(daoUser.getUserListSize() - 1).getId() + 1;
+        } else id = 0;
         return new User(id, login, firstName, lastName, false);
     }
 
-    private User createAdmin(String login, String firstName, String lastName){
-
-        id = daoUser.getUserFromList(daoUser.getUserListSize()-1).getId() + 1;
-        return new Shyrick.User(id, login, firstName, lastName, true);
+    /**
+     * Метод создает администратора принимая параметры:
+     * @param login логин пользователя
+     * @param  firstName - имя пользователя
+     * @param lastName  - фамилия поьлзователея
+     * В конструктор передается уникальныый id пользователя и значение поля isAdmin = true
+     *@return новый пользователь-администратор
+     */
+    private User createAdmin(String login, String firstName, String lastName) {
+        if (daoUser.getUserListSize() != 0) {
+            id = daoUser.getUserFromList(daoUser.getUserListSize() - 1).getId() + 1;
+        } else id = 0;
+        return new User(id, login, firstName, lastName, true);
     }
 
+    /**
+     * Метод входа в систему зарегистрированного пользователя или администратора
+     * Ожидает ввод логина с консоли, сравнивает полученное значение с базой данных пользвателей
+     * находит пользователя с данным логином
+     */
     public void login (){
 
         Scanner scanner = new Scanner(System.in);
@@ -55,16 +77,17 @@ public class UserController {
         System.out.println();
 
 
-        if (tempUser.getIsAdmin()) System.out.println("вызов меню админа");
-        else  System.out.println("вызов меню пользователя");
-
-//      Вызом меню пользователя
-//        menu.userMainMenu();
+//        if (tempUser.getIsAdmin()) System.out.println("вызов меню админа");
+//        else  System.out.println("вызов меню пользователя");
     }
 
+    /**
+     * Метод создает нового пользователя (методом createUser() ) и записывает его в базу данных пользователй
+     * ожидает ввода с консоли логина, фамилии и имени
+     */
     public void registerUser() {
+
         Scanner scanner = new Scanner(System.in);
-//        Menu menu = new Menu();
 
         System.out.println("Введите логин");
         String login = scanner.nextLine();
@@ -103,11 +126,13 @@ public class UserController {
 
         daoUser.writeInDB();
 
-        System.out.println("вызов меню пользователя");
-//      Вызом меню пользователя
-//        menu.userMainMenu();
+
     }
 
+    /**
+     * Метод создает нового пользователя (методом createAdmin() ) и записывает его в базу данных пользователй
+     * ожидает ввода с консоли логина, фамилии и имени
+     */
     public void registerAdmin() {
 
         Scanner scanner = new Scanner(System.in);
@@ -148,16 +173,15 @@ public class UserController {
         System.out.println();
 
         daoUser.writeInDB();
-
-        System.out.println("вызов меню администратора");
-//      Вызом меню пользователя
-//        menu.adminMainMenu();
     }
 
+    /**
+     * Метод изменяет данные пользователя и записывает в базу данных пользователй
+     * ожидает ввода с консоли новую фамилию и новое имя
+     */
     public void editeUser() {
 
         String login = tempUser.getLogin();
-        Menu menu = new Menu();
 
         if (daoUser.getUserListSize() != 0 ){
 
@@ -182,16 +206,15 @@ public class UserController {
 
         daoUser.writeInDB();
 
-        System.out.println("Вызов меню пользователя");
-//      Вызом меню пользователя
-//        menu.userMainMenu();
-
     }
 
+    /**
+     * Метод удаляет данные пользователя из базы данных
+     */
     public void deleteUser(){
 
         String login = tempUser.getLogin();
-        Menu menu = new Menu();
+
         Scanner scanner = new Scanner(System.in);
 
         int indexOfUser = 0;
@@ -222,13 +245,8 @@ public class UserController {
 
         daoUser.writeInDB();
 
-        System.out.println("Вызов меню пользователя");
-//      Вызом меню пользователя
-//        menu.userMainMenu();
-
-
-
     }
+
 
     public User findById(int id){
         return daoUser.findById(id);
