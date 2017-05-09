@@ -21,7 +21,6 @@ public class Test {
         HotelManager hotelManager = new HotelManager();
 
 
-
         System.out.println("InitializingTest");
 
         for (Hotel hotel : hotelManager.getHotels()) {

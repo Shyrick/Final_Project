@@ -16,7 +16,7 @@ public class UserController {
         return new User(id, login, firstName, lastName, false);
     }
 
-    private Shyrick.User createAdmin(String login, String firstName, String lastName){
+    private User createAdmin(String login, String firstName, String lastName){
 
         id = daoUser.getUserFromList(daoUser.getUserListSize()-1).getId() + 1;
         return new Shyrick.User(id, login, firstName, lastName, true);
@@ -64,7 +64,7 @@ public class UserController {
 
     public void registerUser() {
         Scanner scanner = new Scanner(System.in);
-        Menu menu = new Menu();
+//        Menu menu = new Menu();
 
         System.out.println("Введите логин");
         String login = scanner.nextLine();
@@ -180,6 +180,8 @@ public class UserController {
 
         } else System.out.println("Еще нет ни одного пользователя");
 
+        daoUser.writeInDB();
+
         System.out.println("Вызов меню пользователя");
 //      Вызом меню пользователя
 //        menu.userMainMenu();
@@ -217,6 +219,8 @@ public class UserController {
             daoUser.removeUserFromList(daoUser.getUserFromList(indexOfUser));
             System.out.println("Даннне пользователя успешно удалены");
         }
+
+        daoUser.writeInDB();
 
         System.out.println("Вызов меню пользователя");
 //      Вызом меню пользователя
