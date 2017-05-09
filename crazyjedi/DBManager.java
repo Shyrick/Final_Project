@@ -31,6 +31,13 @@ public class DBManager{
     }
 
     public void createDBStructure(){
+        /**
+         * Creates a structure of DB:
+         * 1) bookings table;
+         * 2) city table;
+         * 3) hotel table;
+         * 4) room table;
+         */
         try{
             File f = new File(cityFilePath);
             f.createNewFile();
@@ -46,26 +53,13 @@ public class DBManager{
         }
     }
 
-//    public String getRoomFilePath() {
-//        return roomFilePath;
-//    }
-//
-//    public void setRoomFilePath(String roomFilePath) {
-//        this.roomFilePath = roomFilePath;
-//    }
-//
-//    public String getHotelFilePath() {
-//        return hotelFilePath;
-//    }
-//
-//    public void setHotelFilePath(String hotelFilePath) {
-//        this.hotelFilePath = hotelFilePath;
-//    }
-
-
     //READ-WRITE CITIES
 
     public void dumpCityDB(Set<City> cities) {
+        /**
+         * Dumps a list of cities to the DB.
+         * @param   cities  a list of cities.
+         */
         File cityFile = new File(this.cityFilePath);
         try{
             cityFile.getParentFile().mkdirs();
@@ -83,6 +77,10 @@ public class DBManager{
     }
 
     public Set<City> readCitiesDB() {
+        /**
+         * Reads a list of cities from the DB.
+         * @return  set of cities.
+         */
         String line;
         List<String> cityBlueprints = new ArrayList<>();
         BufferedReader reader = null;
@@ -119,6 +117,10 @@ public class DBManager{
 
     //READ-WRITE ROOM
     public void dumpRoomDB(List<Room> rooms) {
+        /**
+         * Dumps rooms list into the DB.
+         * @param   rooms   a list of rooms.
+         */
         File roomFile = new File(this.roomFilePath);
         try{
             roomFile.getParentFile().mkdirs();
@@ -137,6 +139,10 @@ public class DBManager{
     }
 
     public List<Room> readRoomsDB() {
+        /**
+         * Reads a list of rooms from the DB.
+         * @return a list of rooms.
+         */
         String line;
         List<String> roomBlueprints = new ArrayList<>();
         BufferedReader reader = null;
@@ -175,6 +181,10 @@ public class DBManager{
     //READ-WRITE HOTEL
 
     public void dumpHotelDB(List<Hotel> hotels) {
+        /**
+         * Dumps a list of hotels to the DB.
+         * @param   hotels  a list of hotels.
+         */
         File hotelFile = new File(this.hotelFilePath);
         try{
             hotelFile.getParentFile().mkdirs();
@@ -195,7 +205,10 @@ public class DBManager{
     }
 
     public List<Hotel> readHotelsDB(){
-
+        /**
+         * Reads a list of hotels from the DB.
+         * @return  a list of hotels.
+         */
         List<Room> tempRooms = readRoomsDB();
 
         String line;
@@ -252,6 +265,9 @@ public class DBManager{
     }
 
     public void truncateDB(){
+        /**
+         * Truncates all tables in the DB.
+         */
         File roomFile = new File(this.roomFilePath);
         if(roomFile.exists()) roomFile.delete();
 
@@ -271,6 +287,10 @@ public class DBManager{
     //LOAD/DUMP BOOKINGS
 
     public void dumpBookingsDB(List<Booking> bookings) {
+        /**
+         * Dumps bookings table into DB.
+         * @param   bookings    a list of bookings.
+         */
         File bookingsFile = new File(this.bookingsFilePath);
         try{
             bookingsFile.getParentFile().mkdirs();
@@ -294,10 +314,17 @@ public class DBManager{
     }
 
     public DateFormat getDf() {
+        /**
+         * @return date formatter to read/write dates into/from bookings DB.
+         */
         return df;
     }
 
     public List<List<String>> readBookingDB(){
+        /**
+         * Reads bookings from a DB.
+         * @return  bookings list.
+         */
         List<List<String>> res = new ArrayList<>();
 
         String line;
@@ -318,8 +345,6 @@ public class DBManager{
                 e.printStackTrace();
             }
         }
-
-
 
         for (String bookingBlueprint : bookingBlueprints) {
             ArrayList<String> tempBooking = new ArrayList<>();

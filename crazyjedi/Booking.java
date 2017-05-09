@@ -87,14 +87,12 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "Booking{" +
-                "id=" + id +
-                ", room=" + room +
-                ", user=" + user +
-                ", dateBegin=" + dateBegin +
-                ", dateEnd=" + dateEnd +
-                ", hotel=" + hotel +
-                '}';
+        return  "Booking #: " + id + "\n"+
+                "USER:\n" + user +"\n"+
+                "Begin Date:" + dateBegin +
+                "\tEnd Date:" + dateEnd +"\n"+
+                "HOTEL\n: " + hotel +"\n"+
+                "ROOM:\n" + room +"\n";
     }
 
     public void setDateBegin(Date dateBegin) {

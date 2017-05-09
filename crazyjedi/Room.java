@@ -40,11 +40,9 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", person=" + person +
-                ", price=" + price +
-                '}';
+        return "Room #" + id +
+                ", capacity:" + person + " preson(s)"+
+                ", price=" + price + " USD";
     }
 
     @Override
