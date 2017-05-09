@@ -59,12 +59,8 @@ public class Hotel {
     }
 
     public void removeRoom(int roomId){
-        Iterator<Room> iter = rooms.iterator();
-        while(iter.hasNext()){
-            Room curRoom = iter.next();
-            if(curRoom.getId()==roomId){
-                rooms.remove(curRoom);
-            }
+        for (int i = 0; i < rooms.size(); i++) {
+            if(rooms.get(i).getId() == roomId){rooms.remove(i);}
         }
     }
 
@@ -76,21 +72,21 @@ public class Hotel {
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer("");
-        sb.append("Hotel #");
+        sb.append("Отель #");
         sb.append(id);
-        sb.append(", City ");
+        sb.append(", Город ");
         sb.append(city);
-        sb.append(", Name'");
+        sb.append(", Название ");
         sb.append(name);
-        sb.append("\n");
-        sb.append("ROOMS:\n");
+        sb.append("\t\t");
+        sb.append("Комнаты: ");
         for (int i = 0; i < rooms.size(); i++) {
             Room room = rooms.get(i);
             sb.append("\t" + room);
             if(i%2==0){
                 sb.append("\t");
             } else{
-                sb.append("\n");
+                sb.append("\t");
             }
         }
         return  sb.toString();

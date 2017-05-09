@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  */
 public class BookingManager {
 
-    private List<Booking> bookingList = null;
+    private List<Booking> bookingList = new ArrayList<>();
     private HotelManager hotelManager = null;
     private DBManager dbm = new DBManager();
     private AtomicLong bookingMaxId = new AtomicLong(0);

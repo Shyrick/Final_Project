@@ -87,12 +87,12 @@ public class Booking {
 
     @Override
     public String toString() {
-        return  "Booking #: " + id + "\n"+
-                "USER:\n" + user +"\n"+
-                "Begin Date:" + dateBegin +
-                "\tEnd Date:" + dateEnd +"\n"+
-                "HOTEL\n: " + hotel +"\n"+
-                "ROOM:\n" + room +"\n";
+        return  "Бронирование Id - " + getId() + " пользователь " + getUser().getLogin() +
+                "\nОтель: " + getHotel().getName() +
+                " Комната: " + getRoom().getId() +
+                " Город: " + getHotel().getCity() +
+                "\nДата начала: " + getDateBegin() +
+                "\nДата конца: " + getDateEnd() + "\n";
     }
 
     public void setDateBegin(Date dateBegin) {

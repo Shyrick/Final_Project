@@ -145,7 +145,7 @@ public class HotelManager {
          * @param   hotelToRemove  a hotel to be removed.
          */
         this.setHotels(this.hotels.stream()
-                .filter(hotel -> hotel.getId()==hotelToRemove.getId())
+                .filter(hotel -> hotel.getId()!=hotelToRemove.getId())
                 .collect(Collectors.toList()));
         dbm.dumpRoomDB(this.getRooms());
         dbm.dumpHotelDB(this.getHotels());
@@ -162,11 +162,12 @@ public class HotelManager {
         // подтянутся новые данные.
         removeHotel(id);
         City curCity = cities.stream()
-                            .filter(city -> hotel.getName().equals(city.getName()))
+                            .filter(city -> hotel.getCity().equals(city.getName()))
                             .findFirst()
                             .orElse(null);
         if(curCity!=null) {
             createHotel(id, curCity.getId(), hotel.getName());
+            hotel.getRooms().forEach(r->findHotelById(id).addRoom(r));
         }else {
             throw new IllegalArgumentException("No city with such id!");
         }

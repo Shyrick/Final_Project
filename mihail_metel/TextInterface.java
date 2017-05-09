@@ -30,6 +30,9 @@ public class TextInterface {
 
     public static void create(BookingManager bookingManager) {
         interFace = new TextInterface(bookingManager);
+        System.out.println("Добро пожаловать в программу управления бронированиями группы 10 GoJava#6." +
+                "Для выбора пунктов меню вводите соответствующий номер команды или ее полный текст." +
+                "Приятного использования!\n");
     }
 
     private TextInterface(BookingManager bookingManager) {
@@ -185,8 +188,9 @@ public class TextInterface {
                 userController.editeUser();
                 break;
             case "Удалить свои данные":
-                userController.deleteUser();
-                break;
+                deleteMy();
+                throw new RuntimeException("Такого пользователя больше нет.");
+                //break;
             case "Сделать бронирование на пользователя":
                 findUser();
                 addBooking();
@@ -213,7 +217,131 @@ public class TextInterface {
         }
     }
 
+    private void deleteMy() {
+        System.out.println("Удалить также ваши бронирования? \n1. Да\n2. Нет, отменить удаление данных");
+        try{
+            int c = scanner.nextInt();
+            if (c == 1) {
+                bookingManager.removeBooking(bookingManager.getAllBookings().stream().filter(b->b.getUser().equals(editedUser)).collect(Collectors.toList()));
+                userController.deleteUser();
+            } else {
+                System.out.println("Удаление данных отменено.");
+            }
+        } catch (RuntimeException e){
+            System.out.println("Ошибка при отмене бронирования");
+        }
+
+    }
+
     private void editOrRemoveHotel() {
+        try{
+            Hotel hotel = selectHotel();
+            System.out.println("1. Изменить название отеля\n" +
+                    "2. Удалить отель и все его бронирования\n" +
+                    "3. Заново ввести все комнаты (только при отсутствии бронирований)\n" +
+                    "4. Добавить комнаты\n" +
+                    "5. Назад");
+            byte choise = scanner.nextByte();
+
+            switch (choise) {
+                case 1:
+                    System.out.println("Введите новое название отеля");
+                    hotel.setName(scanner.next());
+
+                    hotelManager.updateHotel(hotel.getId(),hotel);
+
+                    bookingManager.dumpBookings();
+                    bookingManager.loadBookings();
+                    break;
+                case 2:
+                    System.out.println("Вы вообще осознаете, что при этом отель и все бронирования будут удалены?" +
+                            "\n1. Да\n2. Отмена");
+                    byte с = scanner.nextByte();
+                    if (с == 1) {
+                        List<Booking> bookings;
+
+                        if ( bookingManager.getAllBookings()!= null){
+                            bookings = bookingManager.getAllBookings().stream().filter(b -> b.getHotel().equals(hotel)).collect(Collectors.toList());
+                            if(bookings != null && bookings.size()!=0) {
+                                bookingManager.removeBooking(bookings);
+                            }
+                        }
+                        hotelManager.removeHotel(hotel);
+                        System.out.println("Отель и все его бронирования безвозвратно удалены.");
+                        return;
+                    } else return;
+                case 3:
+                    if (bookingManager.getAllBookings().stream().filter(b -> b.getHotel().equals(hotel)).findFirst().orElse(null) == null) {
+                        List<Integer> list = new ArrayList<>();
+                        int s = hotel.getRooms().size();
+                        for (int i = 0; i < s; i++) {
+                            list.add(hotel.getRooms().get(i).getId());
+                        }
+                        for (int i = 0; i < s; i++) {
+                            hotel.removeRoom(list.get(i));
+                        }
+
+                        byte ch;
+                        do {
+                            System.out.println("Введите цену на комнаты");
+                            double price = scanner.nextDouble();
+                            System.out.println("Введите количество людей  в комнате");
+                            byte persons = scanner.nextByte();
+                            System.out.println("Введите количество таких комнат");
+                            int count = scanner.nextInt();
+
+                            for (int i = 0; i < count; i++) {
+                                hotelManager.createRoom(hotel, persons, new BigDecimal(price));
+                            }
+
+                            System.out.println("Хотите ли добавить еще комнаты в этот отель? \n1. Да\n2. Нет  ");
+                            ch = scanner.nextByte();
+                        } while (ch == 1);
+                    } else {
+                        System.out.println("В отеле есть комнаты с бронированиями, действие невозможно.");
+                    }
+                    return;
+                case 4:
+                    byte ch;
+                    do {
+                        System.out.println("Введите цену на комнаты");
+                        double price = scanner.nextDouble();
+                        System.out.println("Введите количество людей  в комнате");
+                        byte persons = scanner.nextByte();
+                        System.out.println("Введите количество таких комнат");
+                        int count = scanner.nextInt();
+
+                        for (int i = 0; i < count; i++) {
+                            hotelManager.createRoom(hotel, persons, new BigDecimal(price));
+                        }
+
+                        System.out.println("Хотите ли добавить еще комнаты в этот отель? \n1. Да\n2. Нет  ");
+                        ch = scanner.nextByte();
+                    } while (ch == 1);
+                    return;
+                case 5:
+                    return;
+                default:
+                    return;
+            }
+        }catch (RuntimeException e) {
+            System.out.println(e);
+        }
+
+    }
+
+    private Hotel selectHotel() throws RuntimeException {
+        System.out.println("Выберите отель из списка ниже:");
+        try{
+            hotelManager.getHotels().forEach(System.out::println);
+            System.out.println("\nВведите ID отеля");
+            int id = scanner.nextInt();
+            System.out.println(hotelManager.findHotelById(id));
+            return hotelManager.findHotelById(id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Ошибка при выборе отелся");
+        }
+
     }
 
     private void changeOrCanselBooking(boolean isAdmin) throws RuntimeException {
@@ -227,7 +355,14 @@ public class TextInterface {
                     System.out.println("Нет ни одного бронирования");
                     return;
                 }
-                bookingManager.getByUser(userController.getTempUser()).forEach(System.out::println);
+                bookingManager.getByUser(userController.getTempUser()).forEach(b->{
+                    System.out.println("Бронирование Id - " + b.getId() +
+                            "\nОтель: " + b.getHotel().getName() +
+                            " Комната: " + b.getRoom().getId() +
+                            " Город: " + b.getHotel().getCity() +
+                            "\nДата начала: " + b.getDateBegin() +
+                            "\nДата конца: " + b.getDateEnd() + "\n");});
+
                 System.out.println("Введите ID бронирования:");
                 int id = scanner.nextInt();
                 booking = bookingManager.findById(id);
@@ -368,7 +503,24 @@ public class TextInterface {
         City city;
 
         try{editedUser = userController.getTempUser();
-            city = addOrSelectCity();
+            System.out.println("Cуществующие города");
+            hotelManager.getCities().forEach(System.out::println);
+            System.out.println("\nВведите номер города");
+            int cityId = scanner.nextInt();
+            city = hotelManager.getCities().stream().filter(c->c.getId() == cityId).findFirst().orElse(null);
+
+            System.out.println("Доступные отели в городе");
+            List<Hotel> hotelList = hotelManager.getHotelsByCity(city.getId());
+            if (hotelList == null || hotelList.size() == 0) {
+                System.out.println("К сожалению в этом городе не зарегистрировано ни одного отеля");
+                return;
+            }
+            hotelList.forEach(System.out::println);
+            System.out.println("\nВведите ID отеля");
+
+            int hotelId = scanner.nextInt();
+            Hotel hotel = hotelManager.findHotelById(hotelId);
+
             System.out.println("Введите дату начала бронирования");
             Date dateBegin = getDate();
             System.out.println("Введите дату конца бронирования");
@@ -377,26 +529,19 @@ public class TextInterface {
             if (dateBegin.compareTo(dateEnd) > 0) {throw new RuntimeException("Дата начала позже даты конца!");
             }
 
-            System.out.println("Доступные отели в городе");
-            hotelManager.getHotelsByCity(city.getId()).forEach(System.out::println);
-            System.out.println("Введите ID отеля");
-
-            int hotelId = scanner.nextInt();
-            Hotel hotel = hotelManager.findHotelById(hotelId);
-
-            System.out.println("Комнаты доступные для бронирования:");
+            System.out.println("\nКомнаты доступные для бронирования:");
             hotel.getRooms().stream().filter(r->
                 bookingManager.checkBookingPossible(dateBegin,dateEnd,r)).forEach(System.out::println);
 
-            System.out.println("Введите ID комнаты");
+            System.out.println("\nВведите ID комнаты");
             int roomId = scanner.nextInt();
 
             bookingManager.addBooking(dateBegin, dateEnd, editedUser, hotelId, roomId);
-            System.out.println("Бронирование на пользователя " + editedUser.getLogin() + "\nс " + dateBegin + "\nпо " + dateEnd +
+            System.out.println("\nБронирование на пользователя " + editedUser.getLogin() + "\nс " + dateBegin + "\nпо " + dateEnd +
                     "\nв отеле " + hotel.getName() + "\nв городе " + hotel.getCity() + " успешно добавлено.");
         }
         catch (Exception e){
-            System.out.println("Не удалось создать бронирование");
+            System.out.println("\nНе удалось создать бронирование");
         }
     }
 
@@ -415,6 +560,7 @@ public class TextInterface {
         findUserById();
         if (editedUser!= null) {
             userController.setTempUser(editedUser);
+            bookingManager.removeBooking(bookingManager.getAllBookings().stream().filter(b->b.getUser().equals(editedUser)).collect(Collectors.toList()));
             userController.deleteUser();
         }
         else {
@@ -426,6 +572,7 @@ public class TextInterface {
         findUserByLogin();
         if (editedUser!= null) {
             userController.setTempUser(editedUser);
+            bookingManager.removeBooking(bookingManager.getAllBookings().stream().filter(b->b.getUser().equals(editedUser)).collect(Collectors.toList()));
             userController.deleteUser();
         }
         else {
@@ -481,7 +628,7 @@ public class TextInterface {
         }
     }
 
-    private void findUser() {
+    private void findUser() throws RuntimeException {
         System.out.println("Найти пользователя\n1. По ID\n2. По логину");
 
         try{
@@ -535,7 +682,7 @@ public class TextInterface {
 
     private String getName() throws RuntimeException {
         String name;
-        try{name = scanner.nextLine();
+        try{name = scanner.next();
             if(name == null || name.length() == 0) {
                 throw new RuntimeException("Некорректное имя");
             }
